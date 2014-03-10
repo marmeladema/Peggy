@@ -49,7 +49,7 @@ def prefix_gen_python(e, depth, ret = False):
 	return lines
 
 def sum_gen_python(depth):
-	s = '+'.join(["results[" + str(i) + "]" for i in range(0, depth)])
+	s = '+'.join(["results[" + str(i) + "].o" for i in range(0, depth)])
 	if s:
 		s = 'i+'+s
 	else:
@@ -59,6 +59,7 @@ def sum_gen_python(depth):
 class Expr:
 	def __init__(self, t):
 		self.prefix = None
+		self.suffix = None
 		self.type = t
 		self.data = None
 		self.final = False
@@ -93,7 +94,7 @@ class ExprOr(Expr):
 		lines += ["results[" + str(depth) + "].o = 0"]
 		lines += ["# v.append(False)"]
 		lines += ["results[" + str(depth) + "].v = False"]
-		lines.append("n.append([])")
+		#lines.append("n.append([])")
 		for i in range(0, len(self.data)):
 			lines += ["# if o[-1] == 0:"]
 			lines += ["if results[" + str(depth) + "].o == 0:"]
@@ -102,12 +103,12 @@ class ExprOr(Expr):
 		lines += ["l = results[" + str(depth) + "].o"]
 		lines += ["# m = v.pop()"]
 		lines += ["m = results[" + str(depth) + "].v"]
-		lines.append("a = n.pop()")
-		lines.append("if len(n) > 1:")
-		lines.append("\ta = n.pop()")
-		lines.append("\tn[-1] += a")
-		lines.append("else:")
-		lines.append("\tn += a")
+		#lines.append("a = n.pop()")
+		#lines.append("if len(n) > 1:")
+		#lines.append("\ta = n.pop()")
+		#lines.append("\tn[-1] += a")
+		#lines.append("else:")
+		#lines.append("\tn += a")
 		return lines
 
 	def getDepth(self):
@@ -152,16 +153,21 @@ class ExprSeq(Expr):
 				lines += ["\t"*block + "# o[-1] += l"]
 				lines += ["\t"*block + "results[" + str(depth - 1) + "].o += l"]
 				if self.data[i].type == EXPR_TYPE_RULE:
-					lines.append("\t"*block + "n[-1].append(\"" + self.data[i].data + "\")")
+					lines.append("\t"*block + "results[0].node.children.append(result.node)")
+					lines += ["\t"*block + "results[" + str(depth - 1) + "].n += 1"]
+				#	lines.append("\t"*block + "n[-1].append(\"" + self.data[i].data + "\")")
 
 		if self.data[-1].prefix == '!' or self.data[-1].prefix == '&':
-			lines += ["\t"*block + "v[-1] = True"]
+			lines += ["\t"*block + "results[" + str(depth - 1) + "].v = True"]
 		while block:
 			block -= 1
 			lines += ["\t"*block + "else:"]
 			lines += ["\t"*(block + 1) + "# o[-1] = 0"]
 			lines += ["\t"*(block + 1) + "results[" + str(depth - 1) + "].o = 0"]
-			lines.append("\t" * (block + 1) + "del n[-1][:]")
+			lines.append("\t"*(block + 1) + "while results[" + str(depth - 1) + "].n > 0:")
+			lines.append("\t"*(block + 2) + "results[0].node.children.pop()")
+			lines.append("\t"*(block + 2) + "results[" + str(depth - 1) + "].n -= 1")
+			#lines.append("\t" * (block + 1) + "del n[-1][:]")
 		return lines
 
 	def getDepth(self):
@@ -224,7 +230,9 @@ class ExprRule(Expr):
 		return s + self.data
 
 	def gen_python(self, depth, ret = False):
-		lines = ["l,m = match_rule_" + self.data + "(p, " + sum_gen_python(depth) + ")"]
+		lines = ["result = match_rule_" + self.data + "(p, " + sum_gen_python(depth) + ")"]
+		lines.append("l = result.o")
+		lines.append("m = result.v")
 		return lines
 
 class ExprWildcard(Expr):
@@ -254,14 +262,19 @@ class Rule:
 		lines = ["def match_rule_" + self.name + "(p, i):"]
 		lines.append("\tprint \"match_rule_%s(input, %%d)\"%%(i,)"%(self.name))
 		lines.append("\tresults = [" + ",".join(["Result()"] * self.expr.getDepth()) + "]")
+		lines.append("\tresults[0].node.type = " + self.getAstName())
 		lines.append("\tl = 0")
 		lines.append("\tm = False")
-		lines.append("\ts = 0")
 		lines.append("\tn = []")
+		lines.append("\ts = [" + ",".join(["0"] * self.expr.getDepth()) + "]")
 		for line in self.expr.gen_python(0, True):
 			lines.append("\t" + line)
 		lines.append("\tprint n")
-		lines.append("\treturn l,m")
+		lines.append("\tif l > 0:")
+		lines.append("\t\tprint '" + self.name + "'")
+		lines.append("\t\tresults[0].node.str = p.input[i:i+l]")
+		lines.append("\t\tresults[0].node.len = l")
+		lines.append("\treturn results[0]")
 		lines.append("")
 		return lines
 
@@ -271,7 +284,8 @@ class Rule:
 	def getAstName(self):
 		return "AST_TYPE_%s"%(self.name.upper(),)
 
-prefixes = ":*+?!&"
+prefixes = ":!&"
+suffixes = "*+?"
 
 def extract_seq(s, d):
 	l = len(s)
@@ -345,8 +359,8 @@ def parse_expr(s, i, e, p = None):
 	rule_len = len(s)
 	prefix = ''
 	while i < rule_len:
-		if s[i] in prefixes:
-			while s[i] in prefixes and i < rule_len-1:
+		if s[i] in prefixes or s[i] in suffixes:
+			while (s[i] in prefixes or s[i] in suffixes) and i < rule_len-1:
 				prefix += s[i]
 				i += 1
 		else:
@@ -414,7 +428,7 @@ def parse_expr(s, i, e, p = None):
 			i = l+1
 		elif s[i] == ')':
 			return i
-		elif s[i] == '|':
+		elif s[i] == '|' or s[i] == '/':
 			e.data.append(ExprSeq())
 			e.data[-1].data = []
 			i += 1
@@ -447,7 +461,7 @@ if __name__ == "__main__":
 	for i in range(0, len(lines)):
 		line = lines[i]
 		#print repr(line)
-		if line[0] == '#' or line[0] == '\n':
+		if line[0] == '#' or line[0] == ';' or line[0] == '\n':
 			continue
 		match = re_rule.match(line)
 		if match:
@@ -497,14 +511,17 @@ def match_wildcard(p, i):
 
 class AstNode:
 	def __init__(self):
-		self.type = t
+		self.type =  0
 		self.children = []
+		self.str = None
+		self.len = 0
 
 class Result:
 	def __init__(self):
 		self.o = 0
 		self.v = False
-		self.s = []
+		self.n = 0
+		self.node = AstNode()
 
 class Parser:
 	def __init__(self, input, start):
@@ -514,12 +531,21 @@ class Parser:
 
 	def parse(self):
 		return self.start(self, 0)
+
+def ast_print(node, block):
+	print "\t" * block + AST_STRINGS[node.type] + "<" + node.str + ">"
+	for child in node.children:
+		ast_print(child, block+1)
 """
 
 	#if "-p" in sys.argv:
 	i = 0
+	print "AST_STRINGS = []"
+	print "AST_TYPE_UNKNOWN = 0"
+	print "AST_STRINGS.append(\"UNKNOWN\")"
 	for name in rules:
-		print "%s = %d"%(rules[name].getAstName(),i)
+		print "%s = %d"%(rules[name].getAstName(),i+1)
+		print "AST_STRINGS.append(\"%s\")"%(name,)
 		i += 1
 
 	for name in rules:
@@ -529,10 +555,3 @@ class Parser:
 		for line in rules[name].gen_python():
 			print line
 		#print print_rule(rules[name])
-
-	print "Lol1 = Parser('ab', parse_rule_Lol1)"
-	print "print len(Lol1.input),Lol1.parse()"
-	print "Lol2 = Parser('b\"', parse_rule_Lol2)"
-	print "print len(Lol2.input),Lol2.parse()"
-	print "SComment = Parser('# lolilol ', parse_rule_SComment)"
-	print "print len(SComment.input),SComment.parse()"
