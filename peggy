@@ -26,15 +26,15 @@ class Node:
 		self.children = []
 		self.str = None
 
-def prefix_gen_python(e, depth, ret = False):
+def prefix_gen_python(e, depth, ast = True):
 	lines = []
-	if e.prefix == '+' or e.prefix == '*':
+	if e.suffix == '+' or e.suffix == '*':
 		lines.append("# o.append(0)")
 		lines.append("results[" + str(depth) + "].o = 0")
 		lines.append("# v.append(False)")
 		lines.append("results[" + str(depth) + "].v = False")
 		lines.append("while True:")
-		lines += ["\t" + line for line in e.gen_python(depth + 1, ret)]
+		lines += ["\t" + line for line in e.gen_python(depth + 1, ast)]
 		lines += ["\tif l > 0:"]
 		lines += ["\t\t# o[-1] += l"]
 		lines += ["\t\tresults[" + str(depth) + "].o += l"]
@@ -45,7 +45,7 @@ def prefix_gen_python(e, depth, ret = False):
 		lines += ["# m = v.pop()"]
 		lines += ["m = results[" + str(depth) + "].v"]
 	else:
-		lines = e.gen_python(depth, ret)
+		lines = e.gen_python(depth, ast)
 	return lines
 
 def sum_gen_python(depth):
@@ -58,20 +58,21 @@ def sum_gen_python(depth):
 
 class Expr:
 	def __init__(self, t):
-		self.prefix = None
-		self.suffix = None
+		self.prefix = ''
+		self.suffix = ''
 		self.type = t
 		self.data = None
 		self.final = False
 
 	def __str__(self):
-		if self.prefix:
-			return self.prefix
-		else:
-			return ''
+		return self.prefix + "%s" + self.suffix
+		#if self.prefix:
+		#	return self.prefix
+		#else:
+		#	return ''
 
 	def getDepth(self):
-		return int(self.prefix == '*' or self.prefix == '+')
+		return int(self.suffix == '*' or self.suffix == '+')
 
 class ExprOr(Expr):
 	def __init__(self):
@@ -79,17 +80,17 @@ class ExprOr(Expr):
 		self.data = []
 
 	def __str__(self):
-		s = Expr.__str__(self)
+		s = ''
 		if len(self.data) > 1:
 			s += '('
 		s += " | ".join([str(c) for c in self.data])
 		if len(self.data) > 1:
 			s += ')'
-		return s
+		return Expr.__str__(self)%(s,)
 
-	def gen_python(self, depth, ret = False):
+	def gen_python(self, depth, ast = True):
 		lines = []
-		lines += ["# ExprOr(depth=%d, ret=%d)"%(depth, ret)]
+		lines += ["# ExprOr(depth=%d, ast=%d)"%(depth, ast)]
 		lines += ["# o.append(0)"]
 		lines += ["results[" + str(depth) + "].o = 0"]
 		lines += ["# v.append(False)"]
@@ -98,7 +99,7 @@ class ExprOr(Expr):
 		for i in range(0, len(self.data)):
 			lines += ["# if o[-1] == 0:"]
 			lines += ["if results[" + str(depth) + "].o == 0:"]
-			lines += ["\t" + line for line in prefix_gen_python(self.data[i], depth + 1, ret)]
+			lines += ["\t" + line for line in prefix_gen_python(self.data[i], depth + 1, ast)]
 		lines += ["# l = o.pop()"]
 		lines += ["l = results[" + str(depth) + "].o"]
 		lines += ["# m = v.pop()"]
@@ -127,26 +128,26 @@ class ExprSeq(Expr):
 		self.data = []
 
 	def __str__(self):
-		s = Expr.__str__(self)
+		s = ''
 		if self.prefix or len(self.data) > 1:
 			s += '('
 		s += " ".join([str(c) for c in self.data])
 		if self.prefix or len(self.data) > 1:
 			s += ')'
-		return s
+		return Expr.__str__(self)%(s,)
 
-	def gen_python(self, depth, ret = False):
+	def gen_python(self, depth, ast = True):
 		#print self.prefix
 		lines = []
-		lines += ["# ExprSeq(depth=%d, ret=%d)"%(depth, ret)]
+		lines += ["# ExprSeq(depth=%d, ast=%d)"%(depth, ast)]
 		block = 0
 		for i in range(0, len(self.data)):
-			lines += ["\t"*block + line for line in prefix_gen_python(self.data[i], depth, ret)]
+			lines += ["\t"*block + line for line in prefix_gen_python(self.data[i], depth, ast)]
 			lines += ["\t"*block + "# prefix:" + str(repr(self.data[i].prefix)) + "" + str(self.data[i - 1].prefix != '?' and self.data[i - 1].prefix != '*')]
 			if self.data[i].prefix == '!':
 				lines += ["\t"*block + "if l == 0:"]
 				block += 1
-			elif self.data[i].prefix != '?' and self.data[i].prefix != '*':
+			elif self.data[i].suffix != '?' and self.data[i].suffix != '*':
 				lines.append("\t"*block + "if l > 0 or m:")
 				block += 1
 			if self.data[i].prefix != '!' and self.data[i].prefix != '&':
@@ -164,9 +165,10 @@ class ExprSeq(Expr):
 			lines += ["\t"*block + "else:"]
 			lines += ["\t"*(block + 1) + "# o[-1] = 0"]
 			lines += ["\t"*(block + 1) + "results[" + str(depth - 1) + "].o = 0"]
-			lines.append("\t"*(block + 1) + "while results[" + str(depth - 1) + "].n > 0:")
-			lines.append("\t"*(block + 2) + "results[0].node.children.pop()")
-			lines.append("\t"*(block + 2) + "results[" + str(depth - 1) + "].n -= 1")
+			lines.append("\t"*(block + 1) + "del results[0].node.children[-results[" + str(depth - 1) + "].n:]")
+			#lines.append("\t"*(block + 1) + "while results[" + str(depth - 1) + "].n > 0:")
+			#lines.append("\t"*(block + 2) + "results[0].node.children.pop()")
+			#lines.append("\t"*(block + 2) + "results[" + str(depth - 1) + "].n -= 1")
 			#lines.append("\t" * (block + 1) + "del n[-1][:]")
 		return lines
 
@@ -186,10 +188,9 @@ class ExprStringSensitive(Expr):
 		self.data = ''
 
 	def __str__(self):
-		s = Expr.__str__(self)
-		return s + "'%s'"%(escape_string(self.data),)
+		return Expr.__str__(self)%("'%s'"%(escape_string(self.data),),)
 
-	def gen_python(self, depth, ret = False):
+	def gen_python(self, depth, ast = True):
 
 		lines = ["l = match_sensitive_string(p, " + sum_gen_python(depth) + ", '" + escape_string(self.data) + "')"]
 		return lines
@@ -200,10 +201,9 @@ class ExprStringInsensitive(Expr):
 		self.data = ''
 
 	def __str__(self):
-		s = Expr.__str__(self)
-		return s + "\"%s\""%(escape_string(self.data),)
+		return Expr.__str__(self)%("\"%s\""%(escape_string(self.data),),)
 
-	def gen_python(self, depth, ret = False):
+	def gen_python(self, depth, ast = True):
 		lines = ["l = match_insensitive_string(p, " + sum_gen_python(depth) + ", '" + escape_string(self.data) + "')"]
 		return lines
 
@@ -213,10 +213,9 @@ class ExprRange(Expr):
 		self.data = ''
 
 	def __str__(self):
-		s = Expr.__str__(self)
-		return s + "[%s]"%(escape_string(self.data),)
+		return Expr.__str__(self)%("[%s]"%(escape_string(self.data),),)
 
-	def gen_python(self, depth, ret = False):
+	def gen_python(self, depth, ast = True):
 		lines = ["l = match_range(p, " + sum_gen_python(depth) + ", '"+ escape_string(self.data) + "')"]
 		return lines
 
@@ -226,10 +225,9 @@ class ExprRule(Expr):
 		self.data = ''
 
 	def __str__(self):
-		s = Expr.__str__(self)
-		return s + self.data
+		return Expr.__str__(self)%(self.data,)
 
-	def gen_python(self, depth, ret = False):
+	def gen_python(self, depth, ast = True):
 		lines = ["result = match_rule_" + self.data + "(p, " + sum_gen_python(depth) + ")"]
 		lines.append("l = result.o")
 		lines.append("m = result.v")
@@ -241,10 +239,9 @@ class ExprWildcard(Expr):
 		self.data = ''
 
 	def __str__(self):
-		s = Expr.__str__(self)
-		return s + '.'
+		return Expr.__str__(self)%('.',)
 
-	def gen_python(self, depth, ret = False):
+	def gen_python(self, depth, ast = True):
 		lines = ["l = match_wildcard(p, " + sum_gen_python(depth) + ")"]
 		return lines
 
@@ -349,7 +346,7 @@ def escape_string(s):
 			e += c
 	return e
 
-def parse_expr(s, i, e, p = None):
+def parse_expr(s, i, e, p = ''):
 	#print "parse_expr",s[i:]
 	e.data.append(ExprSeq())
 	e.data[-1].prefix = p
@@ -358,17 +355,23 @@ def parse_expr(s, i, e, p = None):
 	subrule = False
 	rule_len = len(s)
 	prefix = ''
+	suffix = ''
 	while i < rule_len:
-		if s[i] in prefixes or s[i] in suffixes:
-			while (s[i] in prefixes or s[i] in suffixes) and i < rule_len-1:
-				prefix += s[i]
-				i += 1
+		if s[i] in prefixes:
+			prefix = s[i]
+			i += 1
+		elif s[i] in suffixes:
+			#while (s[i] in prefixes or s[i] in suffixes) and i < rule_len-1:
+			suffix = s[i]
+			i += 1
 		else:
 			prefix = ''
+			suffix = ''
 
 		if s[i] == '.':
 			e.data[-1].data.append(ExprWildcard())
 			e.data[-1].data[-1].prefix = prefix
+			e.data[-1].data[-1].suffix = suffix
 			i += 1
 		elif s[i] == '[':
 			l = extract_seq(s[i:], ']')
@@ -380,6 +383,7 @@ def parse_expr(s, i, e, p = None):
 				return -1
 			e.data[-1].data.append(ExprRange())
 			e.data[-1].data[-1].prefix = prefix
+			e.data[-1].data[-1].suffix = suffix
 			e.data[-1].data[-1].data = r
 			i += l
 		elif s[i] == '\'':
@@ -392,6 +396,7 @@ def parse_expr(s, i, e, p = None):
 				return -1
 			e.data[-1].data.append(ExprStringSensitive())
 			e.data[-1].data[-1].prefix = prefix
+			e.data[-1].data[-1].suffix = suffix
 			e.data[-1].data[-1].data = r
 			i += l
 		elif s[i] == '"':
@@ -404,6 +409,7 @@ def parse_expr(s, i, e, p = None):
 				return -1
 			e.data[-1].data.append(ExprStringInsensitive())
 			e.data[-1].data[-1].prefix = prefix
+			e.data[-1].data[-1].suffix = suffix
 			e.data[-1].data[-1].data = r
 			i += l
 		elif rule[i] in string.ascii_letters:
@@ -412,33 +418,36 @@ def parse_expr(s, i, e, p = None):
 				l += 1
 			e.data[-1].data.append(ExprRule())
 			e.data[-1].data[-1].prefix = prefix
+			e.data[-1].data[-1].suffix = suffix
 			e.data[-1].data[-1].data = s[i:i+l]
 			i += l
 		elif s[i] == '(':
 			e.data[-1].data.append(ExprOr())
 			e.data[-1].data[-1].prefix = prefix
+			e.data[-1].data[-1].suffix = suffix
 			e.data[-1].data[-1].data = []
 			l = parse_expr(s, i+1, e.data[-1].data[-1])
-			if l == 0 or l >= rule_len:
+			if l == 0 or l >= rule_len or s[l] != ')':
 				print "Error: subrule not properly ended"
 				return -1
-			elif l < rule_len and s[l] != ')':
-				return l
-			#print s[l]
 			i = l+1
+
+		if i >= rule_len:
+			return i
+		elif s[i] in suffixes:
+			e.data[-1].data[-1].suffix = s[i]
+			i += 1
+		elif s[i] in ' \t':
+			i += 1
 		elif s[i] == ')':
 			return i
 		elif s[i] == '|' or s[i] == '/':
 			e.data.append(ExprSeq())
 			e.data[-1].data = []
 			i += 1
-		elif s[i] in ' \t':
-			i += 1
 		else:
-			#print "error 2"
-			print "Error: unknown char"
+			print "Error: bad char 2"
 			return i
-		#print "s[i:]=",s[i:]
 	return rule_len
 
 def parse_rule(s, r):
@@ -458,6 +467,7 @@ if __name__ == "__main__":
 	rule = None
 	start = None
 	last_line = 0
+	error = False
 	for i in range(0, len(lines)):
 		line = lines[i]
 		#print repr(line)
@@ -483,7 +493,11 @@ if __name__ == "__main__":
 		l = parse_rule(rule, rules[name])
 		if l != len(rule):
 			print "Syntax error at line %d in rule %s at offset %d: %c"%(i+1,name,l,rule[l])
+			error = True
 	
+	if error:
+		sys.exit(1)
+
 	print """
 def match_sensitive_string(p, i, s):
 	if i + len(s) <= p.length and p.input[i:i+len(s)] == s:
