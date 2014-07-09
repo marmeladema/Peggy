@@ -1,0 +1,5 @@
+Version 1.0:
+- Automatic testing
+- Examples
+- Simplify AST
+- Handle left-recursion operator precedence

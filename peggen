@@ -4,6 +4,7 @@ import sys
 import re
 import shlex
 import string
+import argparse
 
 from peggy.grammar import *
 from peggy.expr import *
@@ -195,10 +196,16 @@ def parse_rule(s, r):
 	return l
 
 if __name__ == "__main__":
-	if len(sys.argv) < 3:
-		print "Usage: %s <output>"%(sys.argv[0],)
-		sys.exit(1)
-	f = open(sys.argv[1])
+	parser = argparse.ArgumentParser(description='Generate a parser from a given Parsing Expression Grammar (PEG) file')
+	parser.add_argument('grammar',  help='PEG file to generate a parser for')
+	parser.add_argument('-l', '--language', choices=['python', 'c'], default='python', help='target language for parser generation')
+	parser.add_argument('-o', '--output', help='prefix name for output files')
+	args = parser.parse_args()
+
+	if args.language != 'python':
+		raise NotImplementedError('target language not implemented yet')
+
+	f = open(args.grammar)
 	lines = f.readlines()
 	name = None
 	rule = None
@@ -244,5 +251,7 @@ if __name__ == "__main__":
 	g.finalize()
 	generator = PythonGenerator()
 	generator.gen(g)
-	generator.write(sys.argv[2])
-		
+	if args.output:
+		generator.write(args.output)
+	else:
+		print str(generator)
