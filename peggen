@@ -5,6 +5,7 @@ import re
 import shlex
 import string
 
+from peggy.grammar import *
 from peggy.expr import *
 from peggy.generator.python import PythonGenerator
 
@@ -17,47 +18,6 @@ class Node:
 		self.type = t
 		self.children = []
 		self.str = None
-
-class Rule:
-	def __init__(self):
-		self.terminal = True
-		self.name = None
-		self.expr = None
-		self.depth = 0
-
-	def __str__(self):
-		return "%s <= %s"%(self.name, str(self.expr))
-
-	def gen_python(self):
-		lines = ["def match_rule_" + self.name + "(p, i):"]
-		lines.append("\tprint \"match_rule_%s(input, %%d)\"%%(i,)"%(self.name))
-		lines.append("\tresult = Result()")
-		lines.append("\tresults = [" + ",".join(["Result()"] * self.expr.getDepth()) + "]")
-		# lines.append("\tresults[0].node.type = " + self.getAstName())
-		lines.append("\tl = 0")
-		lines.append("\tm = False")
-		lines.append("\tn = []")
-		lines.append("\ts = [" + ",".join(["0"] * self.expr.getDepth()) + "]")
-		for line in self.expr.gen_python(0, True):
-			lines.append("\t" + line)
-		lines.append("\tprint n")
-		lines.append("\tif l > 0:")
-		lines.append("\t\tprint '" + self.name + "'")
-		#lines.append("\t\tresults[0].node.str = p.input[i:i+l]")
-		#lines.append("\t\tresults[0].node.len = l")
-		lines.append("\t\tresult.node.append(AstNode())")
-		lines.append("\t\tresult.node[0].str = p.input[i:i+l]")
-		lines.append("\t\tresult.node[0].len = l")
-		lines.append("\t\tresult.node[0].children = results[0].node")
-		lines.append("\treturn result")
-		lines.append("")
-		return lines
-
-	def optimize(self):
-		self.expr.optimize()
-
-	def getAstName(self):
-		return "AST_TYPE_%s"%(self.name.upper(),)
 
 prefixes = ":!&"
 suffixes = "*+?"
@@ -115,7 +75,7 @@ def parse_range(s):
 		i += 1
 	return r
 
-def parse_expr(s, i, e, p = ''):
+def parse_expr(s, i, e, p = '', d = 0):
 	#print "parse_expr",s[i:]
 	e.data.append(ExprAnd())
 	e.data[-1].prefix = p
@@ -129,13 +89,17 @@ def parse_expr(s, i, e, p = ''):
 		if s[i] in prefixes:
 			prefix = s[i]
 			i += 1
+			#print "add prefix:",prefix
 		elif s[i] in suffixes:
 			#while (s[i] in prefixes or s[i] in suffixes) and i < rule_len-1:
 			suffix = s[i]
 			i += 1
+			#print "add suffix:",suffix
 		else:
 			prefix = ''
 			suffix = ''
+
+		#print '\t'*d + "prefix:",prefix
 
 		if s[i] == '.':
 			e.data[-1].data.append(ExprWildcard())
@@ -185,7 +149,8 @@ def parse_expr(s, i, e, p = ''):
 			l = 0
 			while i+l < rule_len and (s[i+l] in string.ascii_letters or s[i+l] in string.digits):
 				l += 1
-			e.data[-1].data.append(ExprRule())
+			e.data[-1].data.append(ExprCall())
+			#print "call",prefix,s[i:i+l],suffix
 			e.data[-1].data[-1].prefix = prefix
 			e.data[-1].data[-1].suffix = suffix
 			e.data[-1].data[-1].data = s[i:i+l]
@@ -195,7 +160,7 @@ def parse_expr(s, i, e, p = ''):
 			e.data[-1].data[-1].prefix = prefix
 			e.data[-1].data[-1].suffix = suffix
 			e.data[-1].data[-1].data = []
-			l = parse_expr(s, i+1, e.data[-1].data[-1])
+			l = parse_expr(s, i+1, e.data[-1].data[-1], d=d+1)
 			if l == 0 or l >= rule_len or s[l] != ')':
 				print "Error: subrule not properly ended"
 				return -1
@@ -208,27 +173,30 @@ def parse_expr(s, i, e, p = ''):
 			i += 1
 		elif s[i] in ' \t':
 			i += 1
+			prefix = ''
+			suffix = ''
 		elif s[i] == ')':
 			return i
 		elif s[i] == '|' or s[i] == '/':
 			e.data.append(ExprAnd())
 			e.data[-1].data = []
 			i += 1
+			prefix = ''
+			suffix = ''
 		else:
 			print "Error: bad char 2"
 			return i
+		#print '\t'*d + "end"
 	return rule_len
 
 def parse_rule(s, r):
-	r.expr = ExprOr()
-	r.expr.data = []
-	l = parse_expr(s, 0, r.expr)
+	r.data = ExprOr()
+	l = parse_expr(s, 0, r.data)
 	return l
 
 if __name__ == "__main__":
-	rules = {}
-	if len(sys.argv) < 2:
-		print "Usage: %s <grammar>"%(sys.argv[0],)
+	if len(sys.argv) < 3:
+		print "Usage: %s <output>"%(sys.argv[0],)
 		sys.exit(1)
 	f = open(sys.argv[1])
 	lines = f.readlines()
@@ -237,6 +205,7 @@ if __name__ == "__main__":
 	start = None
 	last_line = 0
 	error = False
+	g = Grammar()
 	for i in range(0, len(lines)):
 		line = lines[i]
 		#print repr(line)
@@ -245,21 +214,25 @@ if __name__ == "__main__":
 		match = re_rule.match(line)
 		if match:
 			if rule:
-				l = parse_rule(rule, rules[name])
+				l = parse_rule(rule, g.getRule(name))
+				#rules[name].draw()
 				if l != len(rule):
 					print "Syntax error around line %d in rule %s at offset %d: %c"%(last_line+1,name,l,rule[l])
 				elif not start:
 					start = name
 			name = match.group(1)
 			rule = match.group(2)
-			rules[name] = Rule()
-			rules[name].name = name
+			g.addRule(ExprRule(name, g))
 			last_line = i
 		else:
-			rule += line.strip()
+			if not name or rule is None:
+				print "Syntax error at line %d: %s"%(i+1, lines[i].strip())
+				error = True
+			else:
+				rule += line.strip()
 			last_line = i
 	if rule:
-		l = parse_rule(rule, rules[name])
+		l = parse_rule(rule, g.getRule(name))
 		if l != len(rule):
 			print "Syntax error at line %d in rule %s at offset %d: %c"%(i+1,name,l,rule[l])
 			error = True
@@ -267,80 +240,9 @@ if __name__ == "__main__":
 	if error:
 		sys.exit(1)
 
-	print """
-def match_sensitive_string(p, i, s):
-	if i + len(s) <= p.length and p.input[i:i+len(s)] == s:
-		return len(s)
-	else:
-		return 0
-
-def match_insensitive_string(p, i, s):
-	if i + len(s) <= p.length and p.input[i:i+len(s)].lower() == s.lower():
-		return len(s)
-	else:
-		return 0
-
-def match_range(p, i, r):
-	if i < p.length and p.input[i] in r:
-		return 1
-	else:
-		return 0
-
-def match_wildcard(p, i):
-	if i < p.length:
-		return 1
-	else:
-		return 0
-
-class AstNode:
-	def __init__(self):
-		self.type =  0
-		self.children = []
-		self.str = None
-		self.len = 0
-
-class Result:
-	def __init__(self):
-		self.o = 0
-		self.v = False
-		self.n = 0
-		self.node = [] # AstNode()
-
-class Parser:
-	def __init__(self, input, start):
-		self.input = input
-		self.length = len(input)
-		self.start = start
-
-	def parse(self):
-		return self.start(self, 0)
-
-def ast_print(node, block):
-	print "\t" * block + AST_STRINGS[node.type] + "<" + node.str + ">"
-	for child in node.children:
-		ast_print(child, block+1)
-"""
-
-	#if "-p" in sys.argv:
-	i = 0
-	print "AST_STRINGS = []"
-	print "AST_TYPE_UNKNOWN = 0"
-	print "AST_STRINGS.append(\"UNKNOWN\")"
-	for name in rules:
-		print "%s = %d"%(rules[name].getAstName(),i+1)
-		print "AST_STRINGS.append(\"%s\")"%(name,)
-		i += 1
-
-	for name in rules:
-		# rules[name].optimize()
-		print "# " + str(rules[name])
-		print "# depth:",rules[name].expr.getDepth()
-		for line in rules[name].gen_python():
-			print line
+	g.optimize()
+	g.finalize()
+	generator = PythonGenerator()
+	generator.gen(g)
+	generator.write(sys.argv[2])
 		
-		print "# ---------------------- #"
-		
-		generator = PythonGenerator()
-		generator.gen(rules[name].expr)
-		print str(generator)
-		#print print_rule(rules[name])

@@ -35,6 +35,24 @@ def sum_gen_python(depth):
 		s = 'i'
 	return s
 
+def prefixMerge(p1, p2):
+	if p1 == p2:
+		return p1
+	if not p1:
+		return p2
+	if not p2:
+		return p1
+	return False
+
+def suffixMerge(s1, s2):
+	if s1 == s2:
+		return s1
+	if not s1:
+		return s2
+	if not s2:
+		return s1
+	return False
+
 class Expr:
 	TYPE_RULE = 0
 	TYPE_OR = 1
@@ -51,12 +69,94 @@ class Expr:
 		self.type = t
 		self.data = None
 		self.final = False
+		self.parent = None
 
 	def __str__(self):
 		return self.prefix + "%s" + self.suffix
+	
+	def draw(self, prefix='', generator=None):
+		if prefix:
+			line = prefix[:-3]+'  +--'+str(self)
+		else:
+			line = str(self)
+		
+		if generator:
+			generator.add(line)
+		else:
+			print line
 
 	def getDepth(self):
 		return int(self.suffix == '*' or self.suffix == '+')
+	
+	def getRoot(self):
+		current = self
+		while current.parent:
+			current = current.parent
+		return current
+	
+	def optimize(self):
+		pass
+
+	def finalize(self):
+		pass
+
+	def isAtomic(self):
+		return True
+	
+	def isLeftRecursive(self, seen):
+		return False
+
+	def isPredicate(self):
+		if bool(self.prefix):
+			return True
+		if self.parent:
+			return self.parent.isPredicate()
+		return False
+
+class ExprRule(Expr):
+	def __init__(self, name, grammar):
+		Expr.__init__(self, Expr.TYPE_RULE)
+		self.name = name
+		self.grammar = grammar
+	
+	def __str__(self):
+		return "%s <= %s"%(self.name, str(self.data))
+	
+	def draw(self, prefix='', generator=None):
+		line = prefix+self.name
+		if generator:
+			generator.add(line)
+		else:
+			print line
+		self.data.draw(prefix+'   ', generator)
+	
+	def getDepth(self):
+		return 1+self.data.getDepth()
+	
+	def getAstName(self):
+		return "AST_TYPE_%s"%(self.name.upper(),)
+	
+	def optimize(self):
+		self.data.optimize()
+		if (self.data.type == Expr.TYPE_OR or self.data.type == Expr.TYPE_AND):
+			if len(self.data.data) == 1 and len(self.data.prefix+self.data.data[0].prefix) < 2 and len(self.data.suffix+self.data.data[0].suffix) < 2:
+				p = self.data.prefix + self.data.data[0].prefix
+				s = self.data.suffix + self.data.data[0].suffix
+				self.data = self.data.data[0]
+				self.data.prefix = p
+				self.data.suffix = s
+
+	def finalize(self):
+		self.data.finalize()
+		self.data.parent = self
+	
+	def isLeftRecursive(self, seen=None):
+		if seen is None:
+			seen = []
+		if self.name not in seen:
+			seen.append(self.name)
+			return self.data.isLeftRecursive(seen)
+		return False
 
 class ExprOr(Expr):
 	def __init__(self):
@@ -71,35 +171,47 @@ class ExprOr(Expr):
 		if len(self.data) > 1:
 			s += ')'
 		return Expr.__str__(self)%(s,)
-
-	def gen_python(self, depth, ast = True):
-		lines = []
-		lines += ["# ExprOr(depth=%d, ast=%d)"%(depth, ast)]
-		lines += ["results[" + str(depth) + "].o = 0"]
-		lines += ["results[" + str(depth) + "].v = False"]
-		#lines.append("n.append([])")
-		for i in range(0, len(self.data)):
-			lines += ["if results[" + str(depth) + "].o == 0:"]
-			lines += ["\t" + line for line in prefix_gen_python(self.data[i], depth + 1, ast)]
-		lines += ["l = results[" + str(depth) + "].o"]
-		lines += ["m = results[" + str(depth) + "].v"]
-		#lines.append("a = n.pop()")
-		#lines.append("if len(n) > 1:")
-		#lines.append("\ta = n.pop()")
-		#lines.append("\tn[-1] += a")
-		#lines.append("else:")
-		#lines.append("\tn += a")
-		return lines
+	
+	def draw(self, prefix='', generator=None):
+		line = prefix[:-3]+'  +--'+self.prefix+'ExprOr'+self.suffix
+		if generator:
+			generator.add(line)
+		else:
+			print line
+		for e in self.data[:-1]:
+			e.draw(prefix+'  |', generator)
+		self.data[-1].draw(prefix+'   ', generator)
 
 	def getDepth(self):
-		return 1+max([e.getDepth() for e in self.data])+Expr.getDepth(self)
+		return max([e.getDepth() for e in self.data])+Expr.getDepth(self)
 
 	def optimize(self):
 		for i in range(0, len(self.data)):
+			self.data[i].optimize()
 			if self.data[i].type == Expr.TYPE_AND:
-				if len(self.data[i].data) == 1:
+				if len(self.data[i].data) == 1 and len(self.data[i].prefix+self.data[i].data[0].prefix) < 2 and len(self.data[i].suffix+self.data[i].data[0].suffix) < 2:
+					p = self.data[i].prefix + self.data[i].data[0].prefix
+					s = self.data[i].suffix + self.data[i].data[0].suffix
 					self.data[i] = self.data[i].data[0]
+					self.data[i].prefix = p
+					self.data[i].suffix = s
 
+	def finalize(self):
+		for i in range(0, len(self.data)):
+			self.data[i].finalize()
+			self.data[i].parent = self
+
+	def isAtomic(self):
+		for e in self.data:
+			if e.type == Expr.TYPE_OR or e.type == Expr.TYPE_AND:
+				return False
+		return True
+	
+	def isLeftRecursive(self, seen):
+		for e in self.data:
+			if e.isLeftRecursive(seen):
+				return True
+		return False
 
 class ExprAnd(Expr):
 	def __init__(self):
@@ -114,54 +226,47 @@ class ExprAnd(Expr):
 		if self.prefix or len(self.data) > 1:
 			s += ')'
 		return Expr.__str__(self)%(s,)
-
-	def gen_python(self, depth, ast = True):
-		#print self.prefix
-		lines = []
-		lines += ["# ExprAnd(depth=%d, ast=%d)"%(depth, ast)]
-		block = 0
-		for i in range(0, len(self.data)):
-			lines += ["\t"*block + line for line in prefix_gen_python(self.data[i], depth, ast)]
-			#lines += ["\t"*block + "# prefix:" + str(repr(self.data[i].prefix)) + "" + str(self.data[i - 1].prefix != '?' and self.data[i - 1].prefix != '*')]
-			if self.data[i].prefix == '!':
-				lines += ["\t"*block + "if l == 0:"]
-				block += 1
-			elif self.data[i].suffix != '?' and self.data[i].suffix != '*':
-				lines.append("\t"*block + "if l > 0 or m:")
-				block += 1
-			if self.data[i].prefix != '!' and self.data[i].prefix != '&':
-				lines += ["\t"*block + "# o[-1] += l"]
-				lines += ["\t"*block + "results[" + str(depth - 1) + "].o += l"]
-				if self.data[i].type == Expr.TYPE_CALL:
-					lines.append("\t"*block + "results[0].node.children.append(result.node)")
-					lines += ["\t"*block + "results[" + str(depth - 1) + "].n += 1"]
-				#	lines.append("\t"*block + "n[-1].append(\"" + self.data[i].data + "\")")
-
-		if self.data[-1].prefix == '!' or self.data[-1].prefix == '&':
-			lines += ["\t"*block + "results[" + str(depth - 1) + "].v = True"]
-		while block:
-			block -= 1
-			lines += ["\t"*block + "else:"]
-			lines += ["\t"*(block + 1) + "# o[-1] = 0"]
-			lines += ["\t"*(block + 1) + "results[" + str(depth - 1) + "].o = 0"]
-			#lines.append("\t"*(block + 1) + "del results[0].node.children[-results[" + str(depth - 1) + "].n:]")
-			#lines.append("\t"*(block + 1) + "del results[" + str(depth - 1) + "].node")
-			lines.append("\t"*(block + 1) + "results[" + str(depth - 1) + "].n = 0")
-			#lines.append("\t"*(block + 1) + "while results[" + str(depth - 1) + "].n > 0:")
-			#lines.append("\t"*(block + 2) + "results[0].node.children.pop()")
-			#lines.append("\t"*(block + 2) + "results[" + str(depth - 1) + "].n -= 1")
-			#lines.append("\t" * (block + 1) + "del n[-1][:]")
-		return lines
+	
+	def draw(self, prefix='', generator=None):
+		line = prefix[:-3]+'  +--'+self.prefix+'ExprAnd'+self.suffix
+		if generator:
+			generator.add(line)
+		else:
+			print line
+		for e in self.data[:-1]:
+			e.draw(prefix+'  |', generator)
+		self.data[-1].draw(prefix+'   ', generator)
 
 	def getDepth(self):
-		return sum([e.getDepth() for e in self.data])+Expr.getDepth(self)
+		return max([int(e.type == Expr.TYPE_OR)+e.getDepth() for e in self.data])+Expr.getDepth(self)
 		#return 1+Expr.getDepth(self)
 
 	def optimize(self):
 		for i in range(0, len(self.data)):
+			self.data[i].optimize()
 			if self.data[i].type == Expr.TYPE_OR:
-				if len(self.data[i].data) == 1:
+				if len(self.data[i].data) == 1 and len(self.data[i].prefix+self.data[i].data[0].prefix) < 2 and len(self.data[i].suffix+self.data[i].data[0].suffix) < 2:
+					p = self.data[i].prefix + self.data[i].data[0].prefix
+					s = self.data[i].suffix + self.data[i].data[0].suffix
 					self.data[i] = self.data[i].data[0]
+					self.data[i].prefix = p
+					self.data[i].suffix = s
+
+	def finalize(self):
+		for i in range(0, len(self.data)):
+			self.data[i].finalize()
+			self.data[i].parent = self
+
+	def isAtomic(self):
+		return False
+	
+	def isLeftRecursive(self, seen):
+		for e in self.data:
+			if e.isLeftRecursive(seen):
+				return True
+			elif (not e.prefix or e.prefix not in '&!') and (not e.suffix or e.suffix not in '?*'):
+				return False
+		return False
 
 class ExprStringSensitive(Expr):
 	def __init__(self):
@@ -171,11 +276,6 @@ class ExprStringSensitive(Expr):
 	def __str__(self):
 		return Expr.__str__(self)%("'%s'"%(escape_string(self.data),),)
 
-	def gen_python(self, depth, ast = True):
-
-		lines = ["l = match_sensitive_string(p, " + sum_gen_python(depth) + ", '" + escape_string(self.data) + "')"]
-		return lines
-
 class ExprStringInsensitive(Expr):
 	def __init__(self):
 		Expr.__init__(self, Expr.TYPE_STRINGI)
@@ -183,10 +283,6 @@ class ExprStringInsensitive(Expr):
 
 	def __str__(self):
 		return Expr.__str__(self)%("\"%s\""%(escape_string(self.data),),)
-
-	def gen_python(self, depth, ast = True):
-		lines = ["l = match_insensitive_string(p, " + sum_gen_python(depth) + ", '" + escape_string(self.data) + "')"]
-		return lines
 
 class ExprRange(Expr):
 	def __init__(self):
@@ -196,23 +292,19 @@ class ExprRange(Expr):
 	def __str__(self):
 		return Expr.__str__(self)%("[%s]"%(escape_string(self.data),),)
 
-	def gen_python(self, depth, ast = True):
-		lines = ["l = match_range(p, " + sum_gen_python(depth) + ", '"+ escape_string(self.data) + "')"]
-		return lines
-
-class ExprRule(Expr):
+class ExprCall(Expr):
 	def __init__(self):
-		Expr.__init__(self, Expr.TYPE_RULE)
+		Expr.__init__(self, Expr.TYPE_CALL)
 		self.data = ''
 
 	def __str__(self):
 		return Expr.__str__(self)%(self.data,)
-
-	def gen_python(self, depth, ast = True):
-		lines = ["result = match_rule_" + self.data + "(p, " + sum_gen_python(depth) + ")"]
-		lines.append("l = result.o")
-		lines.append("m = result.v")
-		return lines
+	
+	def isLeftRecursive(self, seen):
+		if self.data == seen[0]:
+			return True
+		else:
+			return self.getRoot().grammar.rules[self.data].isLeftRecursive(seen)
 
 class ExprWildcard(Expr):
 	def __init__(self):
@@ -221,7 +313,3 @@ class ExprWildcard(Expr):
 
 	def __str__(self):
 		return Expr.__str__(self)%('.',)
-
-	def gen_python(self, depth, ast = True):
-		lines = ["l = match_wildcard(p, " + sum_gen_python(depth) + ")"]
-		return lines
