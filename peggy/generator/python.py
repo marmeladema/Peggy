@@ -1,4 +1,4 @@
-from . import Generator
+from . import generators, Generator
 from ..grammar import *
 from ..expr import *
 
@@ -129,8 +129,8 @@ class PythonGenerator(Generator):
 			self.genExprWildcard(e)
 		
 		#if e.prefix:
-		if not isinstance(e, ExprOr) and not isinstance(e, ExprAnd):
-			self.genPrefix(e)
+		#if not isinstance(e, ExprOr) and not isinstance(e, ExprAnd):
+		self.genPrefix(e)
 	
 	def genGrammar(self, g):
 		self.add("AST_STRINGS = []")
@@ -154,7 +154,7 @@ class PythonGenerator(Generator):
 		self.add('result.o = ' + '+'.join(['i']+["results[" + str(i) + "].o" for i in range(0, self.stack_depth+1)]))
 
 	def genNode(self, block=0):
-		self.add('\t' * block + 'node.current = ' + '+'.join(['0']+["results[" + str(i) + "].n" for i in range(0, self.stack_depth)]))
+		self.add('\t' * block + 'node.current = ' + '+'.join(['0']+["results[" + str(i) + "].n" for i in range(0, self.stack_depth+1)]))
 	
 	def genPrefix(self, e):
 		if '&' == e.prefix:
@@ -185,7 +185,7 @@ class PythonGenerator(Generator):
 			self.add('if result.v != True or result.o <= 0:')
 			
 			self.block_depth += 1
-			self.genNode()
+			#self.genNode()
 			self.add('break')
 			self.block_depth -= 1
 			
@@ -193,7 +193,7 @@ class PythonGenerator(Generator):
 			
 			self.block_depth += 1
 			self.add("results[" + str(self.stack_depth) + "].o += result.o")
-			self.add("results[" + str(self.stack_depth) + "].n += result.n")
+			#self.add("results[" + str(self.stack_depth) + "].n += result.n")
 			self.genAst(e)
 			self.block_depth -= 1
 			
@@ -215,12 +215,13 @@ class PythonGenerator(Generator):
 			#if e.type == Expr.TYPE_AND:
 			#	self.pop()
 			self.add('if result.v != True or result.o <= 0:')
-			self.genNode(1)
+			#self.genNode(1)
 			self.add('\tbreak')
 			self.add('else:')
 			self.add("\tresults[" + str(self.stack_depth) + "].o += result.o")
 			self.add("\tresults[" + str(self.stack_depth) + "].n += result.n")
 			self.add("\tresults[" + str(self.stack_depth) + "].v = True")
+			self.genAst(e)
 			self.block_depth -= 1
 			self.add("result.assign(results[" + str(self.stack_depth) + "])")
 			#if e.parent:
@@ -231,11 +232,9 @@ class PythonGenerator(Generator):
 	def genExprRule(self, e):
 		self.add("# "+str(e))
 		e.draw('#', self)
-		#if e.isLeftRecursive():
-		#	self.add("#LR MAGGLE")
 		self.add("def match_rule_" + e.name + "(p, i, ast = True, depth = 0):")
 		self.block_depth += 1
-		self.add("print '\t' * depth + '" + e.name + "(p, ' + str(i) + ')'")
+		#self.add("print '\t' * depth + '" + e.name + "(p, ' + str(i) + ')'")
 		self.add("name = '" + e.name + "'")
 		self.add("node = AstNode(" + e.getAstName() + ")")
 		self.add("result = Result()")
@@ -254,9 +253,7 @@ class PythonGenerator(Generator):
 			self.add("rec = parser_get_recursion(p, %s, i)"%(e.getAstName()))
 			self.add("rec.node.assign(node)")
 			self.add("node = AstNode(" + e.getAstName() + ")")
-			#self.add("rec = result.o")
 		self.genSuffix(e.data)
-		#self.add("rec = parser_get_recursion(p, %s, i)"%(e.getAstName()))
 		if rec:
 			self.block_depth -= 1
 			self.add("result.assign(rec)")
@@ -282,8 +279,8 @@ class PythonGenerator(Generator):
 				self.add("results[" + str(self.stack_depth) + "].o = 0")
 				self.add("results[" + str(self.stack_depth) + "].v = False")
 				if not e.data[i].isPredicate():
-					self.genNode()
 					self.add("results[" + str(self.stack_depth) + "].n = 0")
+					self.genNode()
 			self.genSuffix(e.data[i])
 			if e.data[i].isAtomic():
 				self.add("if result.v and result.n > 0 and ast:")
@@ -376,9 +373,13 @@ class PythonGenerator(Generator):
 		#	self.add("results[" + str(self.stack_depth) + "].n += result.n")
 	
 	def __str__(self):
-		return "\n".join(self.lines)
+		return '\n'.join(self.lines)+'\n\n'
 
-	def write(self, output):
+	def write(self, output, append=None):
 		output = open(output + '.py', 'w')
 		output.write(str(self))
+		if append:
+			output.write(append)
 		output.close()
+
+generators['python'] = PythonGenerator
