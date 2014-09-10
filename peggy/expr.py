@@ -10,23 +10,6 @@ def escape_string(s):
 			e += c
 	return e
 
-def prefix_gen_python(e, depth, ast = True):
-	lines = ["#expr: " + str(e)]
-	if e.suffix == '+' or e.suffix == '*':
-		lines.append("results[" + str(depth) + "].o = 0")
-		lines.append("results[" + str(depth) + "].v = False")
-		lines.append("while True:")
-		lines += ["\t" + line for line in e.gen_python(depth + 1, ast)]
-		lines += ["\tif l > 0:"]
-		lines += ["\t\tresults[" + str(depth) + "].o += l"]
-		lines += ["\telse:"]
-		lines += ["\t\tbreak"]
-		lines += ["l = results[" + str(depth) + "].o"]
-		lines += ["m = results[" + str(depth) + "].v"]
-	else:
-		lines = e.gen_python(depth, ast)
-	return lines
-
 def sum_gen_python(depth):
 	s = '+'.join(["results[" + str(i) + "].o" for i in range(0, depth)])
 	if s:
@@ -53,6 +36,9 @@ def suffixMerge(s1, s2):
 		return s1
 	return False
 
+prefixes = "!&"
+suffixes = "+?*"
+
 class Expr:
 	TYPE_RULE = 0
 	TYPE_OR = 1
@@ -63,16 +49,24 @@ class Expr:
 	TYPE_CALL = 6
 	TYPE_WILDCARD = 7
 
-	def __init__(self, t):
-		self.prefix = ''
-		self.suffix = ''
+	def __init__(self, t, ast):
+		self.modifier = ''
+		self.ast = ast
 		self.type = t
 		self.data = None
 		self.final = False
 		self.parent = None
 
 	def __str__(self):
-		return self.prefix + "%s" + self.suffix
+		s = ''
+		if not self.ast and self.type == Expr.TYPE_CALL:
+			s += ':'
+		if self.modifier and self.modifier in prefixes:
+				s += self.modifier
+		s += "%s"
+		if self.modifier and self.modifier in suffixes:
+				s += self.modifier
+		return s
 	
 	def draw(self, prefix='', generator=None):
 		if prefix:
@@ -107,15 +101,15 @@ class Expr:
 		return False
 
 	def isPredicate(self):
-		if bool(self.prefix):
+		if self.modifier and self.modifier in prefixes:
 			return True
 		if self.parent:
 			return self.parent.isPredicate()
 		return False
 
 class ExprRule(Expr):
-	def __init__(self, name, grammar):
-		Expr.__init__(self, Expr.TYPE_RULE)
+	def __init__(self, name, grammar, ast = True):
+		Expr.__init__(self, Expr.TYPE_RULE, ast = ast)
 		self.name = name
 		self.grammar = grammar
 	
@@ -139,12 +133,11 @@ class ExprRule(Expr):
 	def optimize(self):
 		self.data.optimize()
 		if (self.data.type == Expr.TYPE_OR or self.data.type == Expr.TYPE_AND):
-			if len(self.data.data) == 1 and len(self.data.prefix+self.data.data[0].prefix) < 2 and len(self.data.suffix+self.data.data[0].suffix) < 2:
-				p = self.data.prefix + self.data.data[0].prefix
-				s = self.data.suffix + self.data.data[0].suffix
+			#if len(self.data.data) == 1 and len(self.data.prefix+self.data.data[0].prefix) < 2 and len(self.data.suffix+self.data.data[0].suffix) < 2:
+			if len(self.data.data) == 1 and (not self.data.modifier or not self.data.data[0].modifier):
+				m = self.data.modifier + self.data.data[0].modifier
 				self.data = self.data.data[0]
-				self.data.prefix = p
-				self.data.suffix = s
+				self.data.modifier = m
 
 	def finalize(self):
 		self.data.finalize()
@@ -159,21 +152,27 @@ class ExprRule(Expr):
 		return False
 
 class ExprOr(Expr):
-	def __init__(self):
-		Expr.__init__(self, Expr.TYPE_OR)
+	def __init__(self, ast = True):
+		Expr.__init__(self, Expr.TYPE_OR, ast = ast)
 		self.data = []
 
 	def __str__(self):
 		s = ''
-		if len(self.data) > 1:
+		if self.modifier or len(self.data) > 1:
 			s += '('
 		s += " | ".join([str(c) for c in self.data])
-		if len(self.data) > 1:
+		if self.modifier or len(self.data) > 1:
 			s += ')'
 		return Expr.__str__(self)%(s,)
 	
 	def draw(self, prefix='', generator=None):
-		line = prefix[:-3]+'  +--'+self.prefix+'ExprOr'+self.suffix
+		p,s = '',''
+		if self.modifier and self.modifier in prefixes:
+			p = self.modifier
+		elif self.modifier and self.modifier in suffixes:
+			s = self.modifier
+
+		line = prefix[:-3]+'  +--'+p+'ExprOr'+s
 		if generator:
 			generator.add(line)
 		else:
@@ -189,12 +188,11 @@ class ExprOr(Expr):
 		for i in range(0, len(self.data)):
 			self.data[i].optimize()
 			if self.data[i].type == Expr.TYPE_AND:
-				if len(self.data[i].data) == 1 and len(self.data[i].prefix+self.data[i].data[0].prefix) < 2 and len(self.data[i].suffix+self.data[i].data[0].suffix) < 2:
-					p = self.data[i].prefix + self.data[i].data[0].prefix
-					s = self.data[i].suffix + self.data[i].data[0].suffix
+				#if len(self.data[i].data) == 1 and len(self.data[i].prefix+self.data[i].data[0].prefix) < 2 and len(self.data[i].suffix+self.data[i].data[0].suffix) < 2:
+				if len(self.data[i].data) == 1 and (not self.data[i].modifier or not self.data[i].data[0].modifier):
+					m = self.data[i].modifier + self.data[i].data[0].modifier
 					self.data[i] = self.data[i].data[0]
-					self.data[i].prefix = p
-					self.data[i].suffix = s
+					self.data[i].modifier = m
 
 	def finalize(self):
 		for i in range(0, len(self.data)):
@@ -214,21 +212,29 @@ class ExprOr(Expr):
 		return False
 
 class ExprAnd(Expr):
-	def __init__(self):
-		Expr.__init__(self, Expr.TYPE_AND)
+	def __init__(self, ast = True):
+		Expr.__init__(self, Expr.TYPE_AND, ast = ast)
 		self.data = []
 
 	def __str__(self):
 		s = ''
-		if self.prefix or len(self.data) > 1:
+		# if self.modifier or len(self.data) > 1:
+		if self.modifier:
 			s += '('
 		s += " ".join([str(c) for c in self.data])
-		if self.prefix or len(self.data) > 1:
+		# if self.modifier or len(self.data) > 1:
+		if self.modifier:
 			s += ')'
 		return Expr.__str__(self)%(s,)
 	
 	def draw(self, prefix='', generator=None):
-		line = prefix[:-3]+'  +--'+self.prefix+'ExprAnd'+self.suffix
+		p,s = '',''
+		if self.modifier and self.modifier in prefixes:
+			p = self.modifier
+		elif self.modifier and self.modifier in suffixes:
+			s = self.modifier
+
+		line = prefix[:-3]+'  +--'+p+'ExprAnd'+s
 		if generator:
 			generator.add(line)
 		else:
@@ -245,12 +251,10 @@ class ExprAnd(Expr):
 		for i in range(0, len(self.data)):
 			self.data[i].optimize()
 			if self.data[i].type == Expr.TYPE_OR:
-				if len(self.data[i].data) == 1 and len(self.data[i].prefix+self.data[i].data[0].prefix) < 2 and len(self.data[i].suffix+self.data[i].data[0].suffix) < 2:
-					p = self.data[i].prefix + self.data[i].data[0].prefix
-					s = self.data[i].suffix + self.data[i].data[0].suffix
+				if len(self.data[i].data) == 1 and (not self.data[i].modifier or not self.data[i].data[0].modifier):
+					m = self.data[i].modifier + self.data[i].data[0].modifier
 					self.data[i] = self.data[i].data[0]
-					self.data[i].prefix = p
-					self.data[i].suffix = s
+					self.data[i].modifier = m
 
 	def finalize(self):
 		for i in range(0, len(self.data)):
@@ -264,38 +268,38 @@ class ExprAnd(Expr):
 		for e in self.data:
 			if e.isLeftRecursive(seen):
 				return True
-			elif (not e.prefix or e.prefix not in '&!') and (not e.suffix or e.suffix not in '?*'):
+			elif (not e.modifier or e.modifier not in '&!') and (not e.modifier or e.modifier not in '?*'):
 				return False
 		return False
 
 class ExprStringSensitive(Expr):
-	def __init__(self):
-		Expr.__init__(self, Expr.TYPE_STRING)
+	def __init__(self, ast = False):
+		Expr.__init__(self, Expr.TYPE_STRING, ast = ast)
 		self.data = ''
 
 	def __str__(self):
 		return Expr.__str__(self)%("'%s'"%(escape_string(self.data),),)
 
 class ExprStringInsensitive(Expr):
-	def __init__(self):
-		Expr.__init__(self, Expr.TYPE_STRINGI)
+	def __init__(self, ast = False):
+		Expr.__init__(self, Expr.TYPE_STRINGI, ast = ast)
 		self.data = ''
 
 	def __str__(self):
 		return Expr.__str__(self)%("\"%s\""%(escape_string(self.data),),)
 
 class ExprRange(Expr):
-	def __init__(self):
-		Expr.__init__(self, Expr.TYPE_RANGE)
+	def __init__(self, ast = False):
+		Expr.__init__(self, Expr.TYPE_RANGE, ast = ast)
 		self.data = ''
 
 	def __str__(self):
 		return Expr.__str__(self)%("[%s]"%(escape_string(self.data),),)
 
 class ExprCall(Expr):
-	def __init__(self):
-		Expr.__init__(self, Expr.TYPE_CALL)
-		self.data = ''
+	def __init__(self, name, ast = True):
+		Expr.__init__(self, Expr.TYPE_CALL, ast = ast)
+		self.data = name
 
 	def __str__(self):
 		return Expr.__str__(self)%(self.data,)
@@ -307,8 +311,8 @@ class ExprCall(Expr):
 			return self.getRoot().grammar.rules[self.data].isLeftRecursive(seen)
 
 class ExprWildcard(Expr):
-	def __init__(self):
-		Expr.__init__(self, Expr.TYPE_WILDCARD)
+	def __init__(self, ast = False):
+		Expr.__init__(self, Expr.TYPE_WILDCARD, ast = ast)
 		self.data = ''
 
 	def __str__(self):

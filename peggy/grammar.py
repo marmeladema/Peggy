@@ -2,12 +2,14 @@ import re, string
 
 from expr import *
 
-re_rule = re.compile("([a-zA-Z][a-zA-Z0-9_-]*)\s*<[:=-]\s*(.*)\s*")
+re_rule = re.compile("([a-zA-Z][a-zA-Z0-9_-]*)\s*<([:=-])\s*(.*)\s*")
 
 #~ ExprStrings = ["OR", "AND", "STRING", "STRINGI", "RANGE", "RULE", "WILDCARD"]
 
-prefixes = ":!&"
-suffixes = "*+?"
+#prefixes = ":!&"
+#suffixes = "*+?"
+modifiers = "!&+?*"
+prefixes = ":"
 
 def extract_seq(s, d):
 	l = len(s)
@@ -70,28 +72,28 @@ def parse_expr(s, i, e, p = '', d = 0):
 	
 	subrule = False
 	rule_len = len(s)
+	modifier = ''
 	prefix = ''
-	suffix = ''
 	while i < rule_len:
-		if s[i] in prefixes:
-			prefix = s[i]
+		if s[i] in modifiers:
+			modifier = s[i]
 			i += 1
 			#print "add prefix:",prefix
-		elif s[i] in suffixes:
+		elif s[i] in prefixes:
 			#while (s[i] in prefixes or s[i] in suffixes) and i < rule_len-1:
-			suffix = s[i]
+			prefix = s[i]
 			i += 1
 			#print "add suffix:",suffix
 		else:
 			prefix = ''
-			suffix = ''
+			modifier = ''
 
 		#print '\t'*d + "prefix:",prefix
-
+		if i >= len(s):
+			return i
 		if s[i] == '.':
 			e.data[-1].data.append(ExprWildcard())
-			e.data[-1].data[-1].prefix = prefix
-			e.data[-1].data[-1].suffix = suffix
+			e.data[-1].data[-1].modifier = modifier
 			i += 1
 		elif s[i] == '[':
 			l = extract_seq(s[i:], ']')
@@ -102,8 +104,7 @@ def parse_expr(s, i, e, p = '', d = 0):
 			if not r:
 				return -1
 			e.data[-1].data.append(ExprRange())
-			e.data[-1].data[-1].prefix = prefix
-			e.data[-1].data[-1].suffix = suffix
+			e.data[-1].data[-1].modifier = modifier
 			e.data[-1].data[-1].data = r
 			i += l
 		elif s[i] == '\'':
@@ -115,8 +116,7 @@ def parse_expr(s, i, e, p = '', d = 0):
 			if not r:
 				return -1
 			e.data[-1].data.append(ExprStringSensitive())
-			e.data[-1].data[-1].prefix = prefix
-			e.data[-1].data[-1].suffix = suffix
+			e.data[-1].data[-1].modifier = modifier
 			e.data[-1].data[-1].data = r
 			i += l
 		elif s[i] == '"':
@@ -128,24 +128,20 @@ def parse_expr(s, i, e, p = '', d = 0):
 			if not r:
 				return -1
 			e.data[-1].data.append(ExprStringInsensitive())
-			e.data[-1].data[-1].prefix = prefix
-			e.data[-1].data[-1].suffix = suffix
+			e.data[-1].data[-1].modifier = modifier
 			e.data[-1].data[-1].data = r
 			i += l
 		elif s[i] in string.ascii_letters:
 			l = 0
-			while i+l < rule_len and (s[i+l] in string.ascii_letters or s[i+l] in string.digits):
+			while i+l < rule_len and s[i+l] in string.ascii_letters+string.digits+'_':
 				l += 1
-			e.data[-1].data.append(ExprCall())
+			e.data[-1].data.append(ExprCall(s[i:i+l], ast = (':' not in prefix)))
 			#print "call",prefix,s[i:i+l],suffix
-			e.data[-1].data[-1].prefix = prefix
-			e.data[-1].data[-1].suffix = suffix
-			e.data[-1].data[-1].data = s[i:i+l]
+			e.data[-1].data[-1].modifier = modifier
 			i += l
 		elif s[i] == '(':
 			e.data[-1].data.append(ExprOr())
-			e.data[-1].data[-1].prefix = prefix
-			e.data[-1].data[-1].suffix = suffix
+			e.data[-1].data[-1].modifier = modifier
 			e.data[-1].data[-1].data = []
 			l = parse_expr(s, i+1, e.data[-1].data[-1], d=d+1)
 			if l == 0 or l >= rule_len or s[l] != ')':
@@ -155,13 +151,16 @@ def parse_expr(s, i, e, p = '', d = 0):
 
 		if i >= rule_len:
 			return i
-		elif s[i] in suffixes:
-			e.data[-1].data[-1].suffix = s[i]
+		elif s[i] in modifiers:
+			if modifier:
+				print "Error: can't have both a prefix and a suffix modifer"
+				return i
+			e.data[-1].data[-1].modifier = s[i]
 			i += 1
 		elif s[i] in ' \t':
 			i += 1
 			prefix = ''
-			suffix = ''
+			modifer = ''
 		elif s[i] == ')':
 			return i
 		elif s[i] == '|' or s[i] == '/':
@@ -169,17 +168,12 @@ def parse_expr(s, i, e, p = '', d = 0):
 			e.data[-1].data = []
 			i += 1
 			prefix = ''
-			suffix = ''
+			modifier = ''
 		else:
-			print "Error: bad char 2"
+			print "Error: bad char ",s[i]
 			return i
 		#print '\t'*d + "end"
 	return rule_len
-
-def parse_rule(s, r):
-	r.data = ExprOr()
-	l = parse_expr(s, 0, r.data)
-	return l
 
 class Grammar:
 	def __init__(self):
@@ -215,15 +209,16 @@ class Grammar:
 			match = re_rule.match(line)
 			if match:
 				if rule:
-					l = parse_rule(rule, self.getRule(name))
+					l = self.parse_rule(rule, self.getRule(name))
 					#rules[name].draw()
 					if l != len(rule):
+						print "debug 1"
 						print "Syntax error around line %d in rule %s at offset %d: %c"%(last_line+1,name,l,rule[l])
 					elif not start:
 						start = name
 				name = match.group(1)
-				rule = match.group(2)
-				self.addRule(ExprRule(name, self))
+				rule = match.group(3)
+				self.addRule(ExprRule(name, self, ast = (':' not in match.group(2))))
 				last_line = i
 			else:
 				if not name:
@@ -234,9 +229,15 @@ class Grammar:
 					rule += line.strip()
 				last_line = i
 		if rule:
-			l = parse_rule(rule, self.getRule(name))
+			l = self.parse_rule(rule, self.getRule(name))
 			if l != len(rule):
-				print "Syntax error at line %d in rule %s at offset %d: %c"%(i+1,name,l,rule[l])
+				print "debug 2"
+				print "Syntax error at line %d in rule %s at offset %d: %c"%(last_line+1,name,l,rule[l])
 				error = True
 		
 		return not error
+
+	def parse_rule(self, s, r):
+		r.data = ExprOr()
+		l = parse_expr(s, 0, r.data)
+		return l

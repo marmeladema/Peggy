@@ -25,9 +25,13 @@ if __name__ == "__main__":
 	g.optimize()
 	g.finalize()
 	
-	generator = generators[args.language]()
-	generator.gen(g)
+	generator = generators[args.language](g)
+	generator.generate()
+
+	append = ''
+	if args.append:
+		append = open(args.append).read()
 	if args.output:
-		generator.write(args.output, open(args.append).read())
+		generator.write(args.output, append)
 	else:
-		print str(generator) + open(args.append).read()
+		print str(generator) + append
