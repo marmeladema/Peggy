@@ -27,7 +27,7 @@ class Generator:
 		self.stack_depth -= 1
 
 	def generate(self):
-		self.genGrammar(self.grammar)
+		self.genGrammar()
 	
 	def __str__(self):
 		return '\n'.join(self.lines)+'\n\n'
@@ -221,7 +221,7 @@ class ImperativeGenerator(Generator):
 	def genExprAnd(self, e):
 		""" Generate code for AND expression """
 
-		self.add('# Before AND(%s) block_level: %s'%(repr(e), str(self.block_level)))
+		#self.add('# Before AND(%s) block_level: %s'%(repr(e), str(self.block_level)))
 
 		if len(e.data) > 1:
 			self.push()
@@ -240,7 +240,7 @@ class ImperativeGenerator(Generator):
 		if len(e.data) > 1:
 			self.pop()
 
-		self.add('# After AND(%s) block_level: %s'%(repr(e), str(self.block_level)))
+		#self.add('# After AND(%s) block_level: %s'%(repr(e), str(self.block_level)))
 
 	def genExprString(self, e):
 		raise NotImplementedError()

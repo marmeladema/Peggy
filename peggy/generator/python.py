@@ -195,23 +195,21 @@ class PythonGenerator(ImperativeGenerator):
 	def condResultValidAst(self):
 		return 'result.v and result.n > 0 and ast'
 
-	def genGrammar(self, g):
+	def genGrammar(self):
 		self.add("AST_STRINGS = []")
-		self.add("AST_TYPE_UNKNOWN = 0")
-		self.add("AST_STRINGS.append(\"UNKNOWN\")")
 		i = 0
-		for name in g.rules:
-			self.add("%s = %d"%(g.rules[name].getAstName(),i+1))
+		for name in self.grammar.rules:
+			self.add("%s = %d"%(self.grammar.rules[name].getAstName(),i+1))
 			self.add("AST_STRINGS.append(\"%s\")"%(name,))
 			i += 1
-		self.add("AST_TYPE_MAX = %u"%(len(g.rules)+1,))
+		self.add("AST_TYPE_MAX = %u"%(len(self.grammar.rules)+1,))
 		
 		self.add(PythonPreamble)
-		for name in sorted(g.rules.keys()):
+		for name in sorted(self.grammar.rules.keys()):
 			self.add("# ---------------------- #")
-			if g.rules[name].isLeftRecursive():
+			if self.grammar.rules[name].isLeftRecursive():
 				self.add("# Left Recursive Rule")
-			self.genExprRule(g.rules[name])
+			self.genExprRule(self.grammar.rules[name])
 
 	def genExprRule(self, e):
 		self.add("# "+str(e))

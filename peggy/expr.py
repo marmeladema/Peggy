@@ -107,6 +107,12 @@ class Expr:
 			return self.parent.isPredicate()
 		return False
 
+	def find(self, t, rec = True):
+		if self.type == t:
+			return [self]
+		else:
+			return []
+
 class ExprRule(Expr):
 	def __init__(self, name, grammar, ast = True):
 		Expr.__init__(self, Expr.TYPE_RULE, ast = ast)
@@ -128,7 +134,7 @@ class ExprRule(Expr):
 		return 1+self.data.getDepth()
 	
 	def getAstName(self):
-		return "AST_TYPE_%s"%(self.name.upper(),)
+		return "PEGGY_NODE_%s"%(self.name.upper(),)
 	
 	def optimize(self):
 		self.data.optimize()
@@ -150,6 +156,12 @@ class ExprRule(Expr):
 			seen.append(self.name)
 			return self.data.isLeftRecursive(seen)
 		return False
+
+	def find(self, t, rec = True):
+		res = Expr.find(self, t, rec)
+		if rec:
+			res.extend(self.data.find(t, True))
+		return res
 
 class ExprOr(Expr):
 	def __init__(self, ast = True):
@@ -211,6 +223,13 @@ class ExprOr(Expr):
 				return True
 		return False
 
+	def find(self, t, rec = True):
+		res = Expr.find(self, t, rec)
+		if rec:
+			for child in self.data:
+				res.extend(child.find(t, True))
+		return res
+
 class ExprAnd(Expr):
 	def __init__(self, ast = True):
 		Expr.__init__(self, Expr.TYPE_AND, ast = ast)
@@ -271,6 +290,13 @@ class ExprAnd(Expr):
 			elif (not e.modifier or e.modifier not in '&!') and (not e.modifier or e.modifier not in '?*'):
 				return False
 		return False
+
+	def find(self, t, rec = True):
+		res = Expr.find(self, t, rec)
+		if rec:
+			for child in self.data:
+				res.extend(child.find(t, True))
+		return res
 
 class ExprStringSensitive(Expr):
 	def __init__(self, ast = False):
