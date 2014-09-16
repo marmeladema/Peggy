@@ -41,8 +41,43 @@ struct peggy_result_s valid_rule_A1(const char *i, size_t len) {
 	return r;
 }
 
+/* A1 <= 'a'? */
+struct peggy_result_s valid_rule_A2(const char *i, size_t len) {
+	struct peggy_result_s r;
+	memset(&r, 0, sizeof(r));
+	r.v = true;
+	if(len > 0 && i[0] == 'a') {
+		r.o = 1;
+	}
+	return r;
+}
+
+/* A1 <= 'a'* */
+struct peggy_result_s valid_rule_A3(const char *i, size_t len) {
+	struct peggy_result_s r;
+	memset(&r, 0, sizeof(r));
+	r.v = true;
+	while(r.o < len && i[r.o] == 'a') {
+		r.o += 1;
+	}
+	return r;
+}
+
+/* #A1 <= 'a'+ */
+struct peggy_result_s valid_rule_A4(const char *i, size_t len) {
+	struct peggy_result_s r = valid_rule_A3(i, len);
+	if(r.v && r.o == 0) {
+		r.v = false;
+	}
+	return r;
+}
+
 static struct peggy_test_s tests[] = {
 	{"A1", peggy_parse_A1, valid_rule_A1},
+	{"A2", peggy_parse_A2, valid_rule_A2},
+	{"A3", peggy_parse_A3, valid_rule_A3},
+	{"A4_0", peggy_parse_A4_0, valid_rule_A4},
+	{"A4_1", peggy_parse_A4_1, valid_rule_A4},
 	{NULL, NULL, NULL}
 };
 
@@ -51,16 +86,18 @@ int main(int argc, char *argv[]) {
 	char input[3] = {0};
 
 	struct peggy_parser_s parser;
+	memset(&parser, 0, sizeof(parser));
 	struct peggy_result_s r1, r2;
 
 	while(tests[i].name) {
+		k = 0;
 		while(product("abcd", 4, input, 3, k)) {
-			parser.input = input;
-			parser.length = 3;
+			peggy_parser_init(&parser, input, 3);
+			memset(&r1, 0, sizeof(r1));
 			tests[i].parse(&parser, 0, &r1, false);
 			r2 = tests[i].verif(input, 3);
 			if(!equal(r1, r2)) {
-				printf("Rule %s failed for input %s, wanted %d,%lu, got %d,%lu\n", tests[i].name, input, r1.v, r1.o, r2.v, r2.o);
+				printf("Rule %s failed for input %s, got %d,%lu, wanted %d,%lu\n", tests[i].name, input, r1.v, r1.o, r2.v, r2.o);
 			}
 			k++;
 		}

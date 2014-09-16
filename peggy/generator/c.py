@@ -5,6 +5,7 @@ from ..expr import *
 CPreamble = '''
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 #include <strings.h>
@@ -26,21 +27,26 @@ struct peggy_result_s {
 	struct peggy_node_s node;
 };
 
-struct peggy_memoize_s {
+struct peggy_memo_s {
 	enum {
 		PEGGY_MEMOIZE_STATE_UNKNOWN,
 		PEGGY_MEMOIZE_STATE_VALID,
 		PEGGY_MEMOIZE_STATE_FAILED,
 	} state;
 	size_t i;
-	size_t o;
+	struct peggy_result_s r;
+};
+
+struct peggy_memo_array_s {
+	struct peggy_memo_s *ptr;
+	size_t count;
 };
 
 struct peggy_parser_s {
 	char *input;
 	size_t length;
 
-	struct peggy_memoize_s *memoize[PEGGY_NODE_COUNT];
+	struct peggy_memo_array_s memo_table[PEGGY_NODE_COUNT];
 };
 
 bool peggy_match_sensitive_string(struct peggy_parser_s *p, size_t i, char *str, size_t len, struct peggy_result_s *res) {
@@ -115,6 +121,11 @@ bool peggy_parser_init(struct peggy_parser_s *parser, char *input, size_t length
 	parser->input = input;
 	parser->length = length;
 
+	size_t i;
+	for(i = 0; i < PEGGY_NODE_COUNT; i++) {
+		parser->memo_table[i].count = 0;
+	}
+
 	return true;
 }
 
@@ -126,6 +137,71 @@ void ast_add_child(struct peggy_node_s node, struct peggy_node_s child) {
 	node.children[node.current] = child;
 	node.current += 1;
 }
+
+bool peggy_get_memo(struct peggy_parser_s *parser, enum peggy_node_type_e type, size_t i, struct peggy_result_s *r) {
+	if(!parser || !r) {
+		return false;
+	}
+
+	size_t k;
+	for(k = 0; k < parser->memo_table[type].count; k++) {
+		if(parser->memo_table[type].ptr[k].i == i) {
+			*r = parser->memo_table[type].ptr[k].r;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool peggy_set_memo(struct peggy_parser_s *parser, enum peggy_node_type_e type, size_t i, struct peggy_result_s r) {
+	if(!parser) {
+		return false;
+	}
+	size_t k;
+	for(k = 0; k < parser->memo_table[type].count; k++) {
+		if(parser->memo_table[type].ptr[k].i == i) {
+			parser->memo_table[type].ptr[k].r = r;
+			return true;
+		}
+	}
+	parser->memo_table[type].ptr = realloc(parser->memo_table[type].ptr, (parser->memo_table[type].count + 1) * sizeof(*parser->memo_table[type].ptr));
+	parser->memo_table[type].ptr[parser->memo_table[type].count].i = i;
+	parser->memo_table[type].ptr[parser->memo_table[type].count].r = r;
+	parser->memo_table[type].count++;
+	return true;
+}
+
+bool peggy_rec_memo(struct peggy_parser_s *p, enum peggy_node_type_e type, size_t i, struct peggy_result_s r1) {
+	struct peggy_result_s r2;
+	if(!peggy_get_memo(p, type, i, &r2) || r1.o > r2.o) {
+		return true;
+	}
+	return false;
+}
+
+void peggy_print_node(struct peggy_node_s node, const char *prefix, size_t plen) {
+	size_t i;
+	if(prefix) {
+		fwrite(prefix, 1, plen-3, stdout);
+		fwrite("  +--", 1, strlen("  +--"), stdout);
+	}
+	fprintf(stdout, "%s[", PEGGY_NODE_NAMES[node.type]);
+	fwrite(node.str, 1, node.len, stdout);
+	fprintf(stdout, "](%lu)\\n", node.i);
+	
+	if(node.count > 0) {
+		char *tmp = calloc(plen + 3, sizeof(char));
+		memcpy(tmp, prefix, plen);
+		for(i = 0; i < node.count - 1; i++) {
+			tmp[plen] = ' ';tmp[plen+1] = ' ';tmp[plen+2] = '|';
+			peggy_print_node(node.children[i], tmp, plen+3);
+		}
+		tmp[plen] = ' ';tmp[plen+1] = ' ';tmp[plen+2] = ' ';
+		peggy_print_node(node.children[i], tmp, plen+3);
+		free(tmp);
+	}
+}
+
 '''
 
 class CGenerator(ImperativeGenerator):
@@ -166,13 +242,31 @@ class CGenerator(ImperativeGenerator):
 		self.add('*/')
 		self.add('bool peggy_parse_' + e.name + '(struct peggy_parser_s *p, size_t i, struct peggy_result_s *result, bool ast) {')
 		self.incBlockLevel()
-		if [c for c in e.find(Expr.TYPE_CALL) if c.ast and not c.isPredicate()]:
+		#if [c for c in e.find(Expr.TYPE_CALL) if c.ast and not c.isPredicate()]:
+		if e.ast:
 			self.add('struct peggy_node_s node;')
+			self.add('memset(&node, 0, sizeof(node));')
+			self.add('node.type = %s;'%e.getAstName())
 		l = len(self.lines)
 		self.resetStack()
-		# REC
+		rec = e.isLeftRecursive()
+		if rec:
+			self.genWhileStart('peggy_rec_memo(p, %s, i, *result)'%e.getAstName())
+			self.add('peggy_set_memo(p, %s, i, *result);'%e.getAstName())
+			# REC
 		self.genExpr(e.data)
-		# REC
+		if rec:
+			self.genWhileEnd()
+			self.add('peggy_get_memo(p, %s, i, result);'%e.getAstName())
+		#if [c for c in e.find(Expr.TYPE_CALL) if c.ast and not c.isPredicate()]:
+		if e.ast:
+			self.genIfStart('result->v')
+			self.add("result->node = node;")
+			self.add("result->n = 1;")
+			self.add("result->node.str = p->input+i;")
+			self.add("result->node.len = result->o;")
+			self.add("result->node.i = i;")
+			self.genIfEnd()
 		if self.max_stack_depth >= 0:
 			self.add('struct peggy_result_s results[' + str(self.max_stack_depth+1) + "];", index = l)
 		self.add('return true;')
@@ -215,7 +309,7 @@ class CGenerator(ImperativeGenerator):
 		self.incBlockLevel()
 
 	def genElse(self):
-		self.decBlockLevel()	
+		self.decBlockLevel()
 		self.add('} else {')
 		self.incBlockLevel()
 

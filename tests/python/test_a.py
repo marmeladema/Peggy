@@ -27,7 +27,7 @@ def valid_rule_A2(i):
 	r = Result()
 	r.v = True
 	if len(i) > 0 and i[0] == 'a':
-		r.o = True
+		r.o = 1
 	return r
 
 #A1 <= 'a'*

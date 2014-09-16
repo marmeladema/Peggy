@@ -145,7 +145,7 @@ class PythonGenerator(ImperativeGenerator):
 		self.incBlockLevel()
 
 	def genElse(self):
-		self.decBlockLevel()	
+		self.decBlockLevel()
 		self.add('else:')
 		self.incBlockLevel()
 
