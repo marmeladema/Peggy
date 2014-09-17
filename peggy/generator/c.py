@@ -113,29 +113,42 @@ bool peggy_match_wildcard(struct peggy_parser_s *p, size_t i, struct peggy_resul
 	return true;
 }
 
-bool peggy_parser_init(struct peggy_parser_s *parser, char *input, size_t length) {
-	if(!parser || !input) {
+bool peggy_parser_init(struct peggy_parser_s *p, char *input, size_t length) {
+	if(!p || !input) {
 		return false;
 	}
 
-	parser->input = input;
-	parser->length = length;
+	memset(p, 0, sizeof(*p));
+	p->input = input;
+	p->length = length;
+
+	return true;
+}
+
+bool peggy_parser_clean(struct peggy_parser_s *p) {
+	if(!p) {
+		return false;
+	}
 
 	size_t i;
 	for(i = 0; i < PEGGY_NODE_COUNT; i++) {
-		parser->memo_table[i].count = 0;
+		free(p->memo_table[i].ptr);
+		p->memo_table[i].ptr = NULL;
+		p->memo_table[i].count = 0;
 	}
 
 	return true;
 }
 
-void ast_add_child(struct peggy_node_s node, struct peggy_node_s child) {
-	if(node.current >= node.count) {
-		node.children = realloc(node.children, sizeof(child) * (node.count + 1));
-		node.current = node.count++;
+void ast_add_child(struct peggy_node_s *node, struct peggy_node_s child) {
+	// printf("[ast_add_child] node->type: %s, node->children: %p, node->current: %lu, child.type: %s, child.children: %p\\n", PEGGY_NODE_NAMES[node->type], node->children, node->current, PEGGY_NODE_NAMES[child.type], child.children);
+	if(node->current >= node->count) {
+		node->children = realloc(node->children, sizeof(child) * (node->count + 1));
+		node->current = node->count++;
+		// printf("[ast_add_child] node->children: %p\\n", node->children);
 	}
-	node.children[node.current] = child;
-	node.current += 1;
+	node->children[node->current] = child;
+	node->current += 1;
 }
 
 bool peggy_get_memo(struct peggy_parser_s *parser, enum peggy_node_type_e type, size_t i, struct peggy_result_s *r) {
@@ -154,6 +167,7 @@ bool peggy_get_memo(struct peggy_parser_s *parser, enum peggy_node_type_e type, 
 }
 
 bool peggy_set_memo(struct peggy_parser_s *parser, enum peggy_node_type_e type, size_t i, struct peggy_result_s r) {
+	// printf("[peggy_set_memo] r.node.children: %p\\n", r.node.children);
 	if(!parser) {
 		return false;
 	}
@@ -202,6 +216,21 @@ void peggy_print_node(struct peggy_node_s node, const char *prefix, size_t plen)
 	}
 }
 
+bool peggy_node_clean(struct peggy_node_s *node) {
+	if(!node) {
+		return false;
+	}
+
+	size_t i;
+	for(i = 0; i < node->count; i++) {
+		peggy_node_clean(node->children+i);
+	}
+	// printf("[peggy_node_clean] node->children: %p\\n", node->children);
+	free(node->children);
+	node->children = NULL;
+	return true;
+}
+
 '''
 
 class CGenerator(ImperativeGenerator):
@@ -242,6 +271,7 @@ class CGenerator(ImperativeGenerator):
 		self.add('*/')
 		self.add('bool peggy_parse_' + e.name + '(struct peggy_parser_s *p, size_t i, struct peggy_result_s *result, bool ast) {')
 		self.incBlockLevel()
+		#self.add('printf("-> %s\\n");'%e.name)
 		#if [c for c in e.find(Expr.TYPE_CALL) if c.ast and not c.isPredicate()]:
 		if e.ast:
 			self.add('struct peggy_node_s node;')
@@ -252,23 +282,31 @@ class CGenerator(ImperativeGenerator):
 		rec = e.isLeftRecursive()
 		if rec:
 			self.genWhileStart('peggy_rec_memo(p, %s, i, *result)'%e.getAstName())
+			self.add('result->node = node;')
 			self.add('peggy_set_memo(p, %s, i, *result);'%e.getAstName())
+			self.add('memset(&node, 0, sizeof(node));')
+			self.add('node.type = %s;'%e.getAstName())
 			# REC
 		self.genExpr(e.data)
 		if rec:
 			self.genWhileEnd()
 			self.add('peggy_get_memo(p, %s, i, result);'%e.getAstName())
+			self.add('peggy_node_clean(&node);')
+			self.add('node = result->node;');
 		#if [c for c in e.find(Expr.TYPE_CALL) if c.ast and not c.isPredicate()]:
 		if e.ast:
 			self.genIfStart('result->v')
-			self.add("result->node = node;")
-			self.add("result->n = 1;")
-			self.add("result->node.str = p->input+i;")
-			self.add("result->node.len = result->o;")
-			self.add("result->node.i = i;")
+			self.add('result->node = node;')
+			self.add('result->n = 1;')
+			self.add('result->node.str = p->input+i;')
+			self.add('result->node.len = result->o;')
+			self.add('result->node.i = i;')
+			#self.genElse()
+			#self.add('peggy_node_clean(&node);')
 			self.genIfEnd()
 		if self.max_stack_depth >= 0:
 			self.add('struct peggy_result_s results[' + str(self.max_stack_depth+1) + "];", index = l)
+		#self.add('printf("<- %s: %%d, %%lu\\n", result->v, result->o);'%e.name)
 		self.add('return true;')
 		self.decBlockLevel()
 		self.add('}')
@@ -341,7 +379,7 @@ class CGenerator(ImperativeGenerator):
 			self.add('node.current = ' + '+'.join(["results[" + str(i) + "].n" for i in range(0, self.stack_depth+1)]) + ';')
 		else:
 			self.add('node.current = 0;')
-		self.add("ast_add_child(node, result->node);")
+		self.add("ast_add_child(&node, result->node);")
 
 	def genStackAccumulateAST(self):
 		self.add("results[" + str(self.stack_depth) + "].n += 1;")

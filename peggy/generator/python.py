@@ -80,7 +80,7 @@ def ast_print(node, prefix=''):
 	if prefix:
 		print prefix[:-3]+'  +--'+AST_STRINGS[node.type]+' [' + node.str + '](' + str(node.i) + ')'
 	else:
-		print AST_STRINGS[node.type]
+		print AST_STRINGS[node.type]+' [' + node.str + '](' + str(node.i) + ')'
 	
 	if len(node.children):
 		for child in node.children[:-1]:
@@ -199,7 +199,7 @@ class PythonGenerator(ImperativeGenerator):
 		self.add("AST_STRINGS = []")
 		i = 0
 		for name in self.grammar.rules:
-			self.add("%s = %d"%(self.grammar.rules[name].getAstName(),i+1))
+			self.add("%s = %d"%(self.grammar.rules[name].getAstName(),i))
 			self.add("AST_STRINGS.append(\"%s\")"%(name,))
 			i += 1
 		self.add("AST_TYPE_MAX = %u"%(len(self.grammar.rules)+1,))
