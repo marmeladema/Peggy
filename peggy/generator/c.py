@@ -384,6 +384,7 @@ class CGenerator(ImperativeGenerator):
 		self.add('result->o = 0;')
 
 	def genResultReset(self):
+		#self.add('peggy_node_clean(&result->node, false);')
 		self.add('memset(result, 0, sizeof(*result));')
 
 	def genIfStart(self, cond):
@@ -460,7 +461,7 @@ class CGenerator(ImperativeGenerator):
 	def genExprCall(self, e):
 		#self.add("print '\t' * depth + name,'=> " + e.data + " before'")
 		self.genResultOffset()
-		if e.isPredicate():
+		if e.isPredicate() or not e.doAst():
 			self.add("peggy_parse_" + e.data + "(p, result->o, result, false);")
 		else:
 			self.add("peggy_parse_" + e.data + "(p, result->o, result, ast);")
