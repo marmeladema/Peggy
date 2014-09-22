@@ -107,6 +107,14 @@ class Expr:
 			return self.parent.isPredicate()
 		return False
 
+	def doAst(self):
+		if not self.ast:
+			return False
+		elif self.parent:
+			return self.parent.doAst()
+		else:
+			return True
+
 	def find(self, t, rec = True):
 		if self.type == t:
 			return [self]

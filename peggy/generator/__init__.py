@@ -106,21 +106,8 @@ class ImperativeGenerator(Generator):
 	def genStackAccumulateAST(self):
 		raise NotImplementedError()
 
-	'''
-	def genIfExprValid(self, e, cond, ast):
-		self.genIfStart(cond)
-		if self.stack_depth >= 0:
-			self.genStackAccumulateOffset()
-		if ast and e.type == Expr.TYPE_CALL and not e.isPredicate() and e.ast and self.grammar.rules[e.data].ast:
-			self.genIfStart(self.condResultValidAst())
-			self.genASTAddNode()
-			if self.stack_depth >= 0:
-				self.genStackAccumulateAST()
-			self.genIfEnd()
-	'''
-
 	def genExprValidAST(self, e):
-		if e.type == Expr.TYPE_CALL and not e.isPredicate() and e.ast and self.grammar.rules[e.data].ast:
+		if e.type == Expr.TYPE_CALL and not e.isPredicate() and e.doAst() and self.grammar.rules[e.data].ast:
 			self.genIfStart(self.condResultValidAst())
 			self.genASTAddNode()
 			if self.stack_depth >= 0:

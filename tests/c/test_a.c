@@ -132,6 +132,8 @@ static struct peggy_test_s tests[] = {
 	{"A3", peggy_parse_A3, valid_rule_A3},
 	{"A4_0", peggy_parse_A4_0, valid_rule_A4},
 	{"A4_1", peggy_parse_A4_1, valid_rule_A4},
+	{"A4_2", peggy_parse_A4_2, valid_rule_A4},
+	{"A4_3", peggy_parse_A4_3, valid_rule_A4},
 	{"A5_0", peggy_parse_A5_0, valid_rule_A5},
 	{"A5_1", peggy_parse_A5_1, valid_rule_A5},
 	{"A5_2", peggy_parse_A5_2, valid_rule_A5},
@@ -155,7 +157,8 @@ int main(int argc, char *argv[]) {
 	while(tests[i].name) {
 		k = 0;
 		while(product("abcd", 4, input, 3, k)) {
-			//printf("Matching %s against input %c%c%c\n", tests[i].name, input[0], input[1], input[2]);
+			// snprintf(input, 4, "aaa");
+			// printf("Matching %s against input %c%c%c\n", tests[i].name, input[0], input[1], input[2]);
 			peggy_parser_init(&parser, input, strlen(input));
 			memset(&r1, 0, sizeof(r1));
 			tests[i].parse(&parser, 0, &r1, true);
@@ -164,7 +167,7 @@ int main(int argc, char *argv[]) {
 				printf("Rule %s failed for input %s, got %d,%lu, wanted %d,%lu\n", tests[i].name, input, r1.v, r1.o, r2.v, r2.o);
 			}
 			// peggy_print_node(r1.node, NULL, 0);
-			peggy_node_clean(&r1.node);
+			peggy_node_clean(&r1.node, true);
 			peggy_parser_clean(&parser);
 			k++;
 		}
