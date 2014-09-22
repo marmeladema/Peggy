@@ -87,7 +87,7 @@ def parse_expr(s, i, e, p = '', d = 0):
 		else:
 			prefix = ''
 			modifier = ''
-
+		
 		#print '\t'*d + "prefix:",prefix
 		if i >= len(s):
 			return i
@@ -160,7 +160,7 @@ def parse_expr(s, i, e, p = '', d = 0):
 		elif s[i] in ' \t':
 			i += 1
 			prefix = ''
-			modifer = ''
+			modifier = ''
 		elif s[i] == ')':
 			return i
 		elif s[i] == '|' or s[i] == '/':
@@ -214,6 +214,7 @@ class Grammar:
 					if l != len(rule):
 						print "debug 1"
 						print "Syntax error around line %d in rule %s at offset %d: %c"%(last_line+1,name,l,rule[l])
+						error = True
 					elif not start:
 						start = name
 				name = match.group(1)

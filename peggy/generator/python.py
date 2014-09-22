@@ -213,7 +213,7 @@ class PythonGenerator(ImperativeGenerator):
 
 	def genExprRule(self, e):
 		self.add("# "+str(e))
-		e.draw('#', self)
+		self.add(e.draw('# '))
 		self.add("def match_rule_" + e.name + "(p, i, ast = True, depth = 0):")
 		self.block_level += 1
 		#self.add("print '\t' * depth + '" + e.name + "(p, ' + str(i) + ')'")

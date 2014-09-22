@@ -204,8 +204,10 @@ class ExprOr(Expr):
 				#if len(self.data[i].data) == 1 and len(self.data[i].prefix+self.data[i].data[0].prefix) < 2 and len(self.data[i].suffix+self.data[i].data[0].suffix) < 2:
 				if len(self.data[i].data) == 1 and (not self.data[i].modifier or not self.data[i].data[0].modifier):
 					m = self.data[i].modifier + self.data[i].data[0].modifier
+					ast = self.data[i].ast and self.data[i].data[0].ast
 					self.data[i] = self.data[i].data[0]
 					self.data[i].modifier = m
+					self.data[i].ast = ast
 
 	def finalize(self):
 		for i in range(0, len(self.data)):
@@ -269,8 +271,10 @@ class ExprAnd(Expr):
 			if self.data[i].type == Expr.TYPE_OR:
 				if len(self.data[i].data) == 1 and (not self.data[i].modifier or not self.data[i].data[0].modifier):
 					m = self.data[i].modifier + self.data[i].data[0].modifier
+					ast = self.data[i].ast and self.data[i].data[0].ast
 					self.data[i] = self.data[i].data[0]
 					self.data[i].modifier = m
+					self.data[i].ast = ast
 
 	def finalize(self):
 		for i in range(0, len(self.data)):

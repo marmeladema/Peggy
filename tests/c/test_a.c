@@ -134,6 +134,7 @@ static struct peggy_test_s tests[] = {
 	{"A4_1", peggy_parse_A4_1, valid_rule_A4},
 	{"A4_2", peggy_parse_A4_2, valid_rule_A4},
 	{"A4_3", peggy_parse_A4_3, valid_rule_A4},
+	{"A4_4", peggy_parse_A4_4, valid_rule_A4},
 	{"A5_0", peggy_parse_A5_0, valid_rule_A5},
 	{"A5_1", peggy_parse_A5_1, valid_rule_A5},
 	{"A5_2", peggy_parse_A5_2, valid_rule_A5},
