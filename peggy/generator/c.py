@@ -246,7 +246,7 @@ bool peggy_node_clean(struct peggy_node_s *node, bool force) {
 }
 
 void ast_add_child(struct peggy_node_s *node, struct peggy_node_s child) {
-	// printf("[ast_add_child] node->type: %s, node->children: %p, node->current: %lu, child.type: %s, child.children: %p\\n", PEGGY_NODE_NAMES[node->type], node->children, node->current, PEGGY_NODE_NAMES[child.type], child.children);
+	// printf("[ast_add_child] node->type: %s, node->children: %p, node->count: %lu, node->current: %lu, child.type: %s, child.children: %p\\n", PEGGY_NODE_NAMES[node->type], node->children, node->count, node->current, PEGGY_NODE_NAMES[child.type], child.children);
 	if(node->current == node->count) {
 		node->children = realloc(node->children, sizeof(child) * (node->count + 1));
 		memset(node->children+node->count, 0, sizeof(node->children[node->count]));
@@ -332,6 +332,7 @@ class CGenerator(ImperativeGenerator):
 				self.add('peggy_node_clean(&node, false);')
 				self.add('node = result->node;');
 		#if [c for c in e.find(Expr.TYPE_CALL) if c.ast and not c.isPredicate()]:
+		self.add('result->n = 0;')
 		if e.ast:
 			self.genIfStart('result->v && ast')
 			self.add('result->node = node;')
@@ -345,7 +346,7 @@ class CGenerator(ImperativeGenerator):
 			self.genIfEnd()
 		if self.max_stack_depth >= 0:
 			self.add('struct peggy_result_s results[' + str(self.max_stack_depth+1) + "];", index = l)
-		#self.add('printf("<- %s: %%d, %%lu\\n", result->v, result->o);'%e.name)
+		#self.add('printf("<- %s: %%d, %%lu, %%lu\\n", result->v, result->o, result->n);'%e.name)
 		self.add('return true;')
 		self.decBlockLevel()
 		self.add('}')

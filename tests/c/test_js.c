@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
 
 	peggy_parse_Program(&parser, 0, &result, true);
 
+	printf("result: %d, %lu\n", result.v, result.o);
 	peggy_print_node(result.node, NULL, 0);
 
 	peggy_node_clean(&result.node, true);
