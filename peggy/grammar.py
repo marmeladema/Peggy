@@ -140,7 +140,7 @@ def parse_expr(s, i, e, p = '', d = 0):
 			e.data[-1].data[-1].modifier = modifier
 			i += l
 		elif s[i] == '(':
-			e.data[-1].data.append(ExprOr())
+			e.data[-1].data.append(ExprOr(ast = (':' not in prefix)))
 			e.data[-1].data[-1].modifier = modifier
 			e.data[-1].data[-1].data = []
 			l = parse_expr(s, i+1, e.data[-1].data[-1], d=d+1)
@@ -164,7 +164,7 @@ def parse_expr(s, i, e, p = '', d = 0):
 		elif s[i] == ')':
 			return i
 		elif s[i] == '|' or s[i] == '/':
-			e.data.append(ExprAnd())
+			e.data.append(ExprAnd(ast = (':' not in prefix)))
 			e.data[-1].data = []
 			i += 1
 			prefix = ''

@@ -59,7 +59,8 @@ class Expr:
 
 	def __str__(self):
 		s = ''
-		if not self.ast and self.type == Expr.TYPE_CALL:
+		#if not self.ast and self.type == Expr.TYPE_CALL:
+		if not self.ast:
 			s += ':'
 		if self.modifier and self.modifier in prefixes:
 				s += self.modifier
@@ -68,16 +69,13 @@ class Expr:
 				s += self.modifier
 		return s
 	
-	def draw(self, prefix='', generator=None):
+	def draw(self, prefix=''):
 		if prefix:
 			line = prefix[:-3]+'  +--'+str(self)
 		else:
 			line = str(self)
 		
-		if generator:
-			generator.add(line)
-		else:
-			print line
+		return line+'\n'
 
 	def getDepth(self):
 		return int(self.suffix == '*' or self.suffix == '+')
@@ -128,15 +126,14 @@ class ExprRule(Expr):
 		self.grammar = grammar
 	
 	def __str__(self):
-		return "%s <= %s"%(self.name, str(self.data))
-	
-	def draw(self, prefix='', generator=None):
-		line = prefix+self.name
-		if generator:
-			generator.add(line)
+		if self.ast:
+			return "%s <= %s"%(self.name, str(self.data))
 		else:
-			print line
-		self.data.draw(prefix+'   ', generator)
+			return "%s <: %s"%(self.name, str(self.data))
+	
+	def draw(self, prefix=''):
+		line = prefix+self.name+'\n'
+		return line + self.data.draw(prefix+'   ')
 	
 	def getDepth(self):
 		return 1+self.data.getDepth()
@@ -185,21 +182,17 @@ class ExprOr(Expr):
 			s += ')'
 		return Expr.__str__(self)%(s,)
 	
-	def draw(self, prefix='', generator=None):
+	def draw(self, prefix=''):
 		p,s = '',''
 		if self.modifier and self.modifier in prefixes:
 			p = self.modifier
 		elif self.modifier and self.modifier in suffixes:
 			s = self.modifier
 
-		line = prefix[:-3]+'  +--'+p+'ExprOr'+s
-		if generator:
-			generator.add(line)
-		else:
-			print line
+		line = prefix[:-3]+'  +--'+p+'ExprOr'+s+'\n'
 		for e in self.data[:-1]:
-			e.draw(prefix+'  |', generator)
-		self.data[-1].draw(prefix+'   ', generator)
+			line += e.draw(prefix+'  |')
+		return line + self.data[-1].draw(prefix+'   ')
 
 	def getDepth(self):
 		return max([e.getDepth() for e in self.data])+Expr.getDepth(self)
@@ -254,21 +247,17 @@ class ExprAnd(Expr):
 			s += ')'
 		return Expr.__str__(self)%(s,)
 	
-	def draw(self, prefix='', generator=None):
+	def draw(self, prefix=''):
 		p,s = '',''
 		if self.modifier and self.modifier in prefixes:
 			p = self.modifier
 		elif self.modifier and self.modifier in suffixes:
 			s = self.modifier
 
-		line = prefix[:-3]+'  +--'+p+'ExprAnd'+s
-		if generator:
-			generator.add(line)
-		else:
-			print line
+		line = prefix[:-3]+'  +--'+p+'ExprAnd'+s+'\n'
 		for e in self.data[:-1]:
-			e.draw(prefix+'  |', generator)
-		self.data[-1].draw(prefix+'   ', generator)
+			line += e.draw(prefix+'  |')
+		return line + self.data[-1].draw(prefix+'   ')
 
 	def getDepth(self):
 		return max([int(e.type == Expr.TYPE_OR)+e.getDepth() for e in self.data])+Expr.getDepth(self)

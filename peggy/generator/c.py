@@ -205,11 +205,10 @@ void peggy_print_node(struct peggy_node_s node, const char *prefix, size_t plen)
 		fwrite(prefix, 1, plen-3, stdout);
 		fwrite("  +--", 1, strlen("  +--"), stdout);
 	}
-	fprintf(stdout, "%s[", PEGGY_NODE_NAMES[node.type]);
-	fwrite(node.str, 1, node.len, stdout);
-	fprintf(stdout, "](%lu)\\n", node.i);
+	fprintf(stdout, "%s", PEGGY_NODE_NAMES[node.type]);
 	
 	if(node.count > 0) {
+		fprintf(stdout, "\\n");
 		char *tmp = calloc(plen + 3, sizeof(char));
 		memcpy(tmp, prefix, plen);
 		for(i = 0; i < node.count - 1; i++) {
@@ -219,6 +218,10 @@ void peggy_print_node(struct peggy_node_s node, const char *prefix, size_t plen)
 		tmp[plen] = ' ';tmp[plen+1] = ' ';tmp[plen+2] = ' ';
 		peggy_print_node(node.children[i], tmp, plen+3);
 		free(tmp);
+	} else {
+		fprintf(stdout, "[");
+		fwrite(node.str, 1, node.len, stdout);
+		fprintf(stdout, "](%lu)\\n", node.i);
 	}
 }
 
@@ -300,13 +303,12 @@ class CGenerator(ImperativeGenerator):
 
 	def genExprRule(self, e):
 		self.add('/*')
-		self.add(str(e))
-		e.draw('', self)
+		self.add(str(e).replace('/*', '/ *').replace('*/', '* /'))
+		self.add(e.draw('').replace('/*', '/ *').replace('*/', '* /'))
 		self.add('*/')
 		self.add('bool peggy_parse_' + e.name + '(struct peggy_parser_s *p, size_t i, struct peggy_result_s *result, bool ast) {')
 		self.incBlockLevel()
-		self.add('memset(result, 0, sizeof(*result));')
-		#self.add('printf("-> %s\\n");'%e.name)
+		#self.add('printf("-> %s: %%lu\\n", i);'%e.name)
 		#if [c for c in e.find(Expr.TYPE_CALL) if c.ast and not c.isPredicate()]:
 		if e.ast:
 			self.add('struct peggy_node_s node;')
@@ -382,8 +384,7 @@ class CGenerator(ImperativeGenerator):
 		self.add('result->o = 0;')
 
 	def genResultReset(self):
-		self.add('result->v = false;')
-		self.add('result->o = 0;')
+		self.add('memset(result, 0, sizeof(*result));')
 
 	def genIfStart(self, cond):
 		self.add('if(' + cond + ') {')

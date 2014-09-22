@@ -135,6 +135,8 @@ class ImperativeGenerator(Generator):
 			self.push()
 			self.genWhileStart(self.condTrue())
 		#'''
+		
+		self.genResultReset()
 
 		if e.type == Expr.TYPE_OR:
 			self.genExprOr(e)
