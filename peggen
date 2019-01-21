@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 import string
@@ -10,22 +10,28 @@ from peggy.generator.all import generators
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description='Generate a parser from a given Parsing Expression Grammar (PEG) file')
 	parser.add_argument('grammar',  help='PEG file to generate a parser for')
-	parser.add_argument('-l', '--language', choices=['python', 'c'], default='python', help='target language for parser generation')
+	parser.add_argument('-l', '--language', choices=['peg', 'python', 'c', 'c2'], default='peg', help='target language for parser generation')
 	parser.add_argument('-o', '--output', help='prefix name for output files')
 	parser.add_argument('-a', '--append', help='append a file to output')
+	parser.add_argument('-m', '--memoize', help='memoize parser results', action='store_true')
 	args = parser.parse_args()
 
-	g = Grammar()
+	g = Grammar(True)
 	if not g.parse(open(args.grammar).read()):
 		sys.exit(1)
 		
 	if args.language not in generators:
 		raise NotImplementedError('target language %s not implemented yet' % (args.language,))
-	
-	g.optimize()
-	g.finalize()
+
+	#g.optimize()
+	#g.finalize()
+	#g.simplify()
+	#g.walk(g.simplify)
+
+	g.tprint()
 	
 	generator = generators[args.language](g)
+	generator.setMemoize(args.memoize)
 	generator.generate()
 
 	append = ''
@@ -34,4 +40,4 @@ if __name__ == "__main__":
 	if args.output:
 		generator.write(args.output, append)
 	else:
-		print str(generator) + append
+		print(str(generator) + append)
