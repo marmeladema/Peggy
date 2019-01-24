@@ -240,10 +240,6 @@ elif ast['length'] < len(data):
 	    format(ast['length'], len(data), args.input)
 	)
 peggy.astprint(ast['nodes'][0], data)
-args.output.write(
-    json.dumps(
-        grammars[args.input]['transform'](ast['nodes'][0], data),
-        indent = 2,
-        sort_keys = True
-    )
-)
+
+pparser = peggy.Peggy(grammars[args.input]['transform'](ast['nodes'][0], data))
+args.output.write(pparser.json(indent = 2, sort_keys = True))

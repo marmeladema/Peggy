@@ -2,6 +2,12 @@ import sys
 import pprint
 import json
 import argparse
+import jsonschema
+import os
+
+grammar_schema = json.load(
+    open(os.path.join(os.path.dirname(__file__), 'grammar.json'), 'r')
+)
 
 ast_priority = {
     'BUILD': 0,
@@ -12,12 +18,18 @@ ast_priority = {
 
 class Peggy:
 	def __init__(self, grammar):
+
+		jsonschema.validate(grammar, grammar_schema)
+
 		self._grammar = grammar
 		self._stack = None
 		self._memoize = None
 		self._count = 0
 		self._last_state = None
 		self._error = None
+
+	def json(self, *args, **kwargs):
+		return json.dumps(self._grammar, *args, **kwargs)
 
 	def walk_node(self, node, func):
 		if node['type'] == 'RULE':

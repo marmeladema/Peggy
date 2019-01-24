@@ -10,5 +10,6 @@ setup(
     author_email = 'xademax@gmail.com',
     url = 'https://github.com/marmeladema/Peggy/',
     packages = ['peggy'],
+    package_data={'peggy': ['grammar.json']},
     scripts = ['peggyconv', 'peggyparse']
 )
