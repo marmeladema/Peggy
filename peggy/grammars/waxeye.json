@@ -1,1036 +1,1036 @@
 {
   "Action": {
-    "ast": "BUILD", 
+    "ast": "BUILD",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "VOID", 
-          "data": "@", 
+          "ast": "VOID",
+          "data": "@",
           "type": "STRING"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Identifier", 
+          "ast": "BUILD",
+          "data": "Identifier",
           "type": "CALL"
-        }, 
+        },
         {
-          "ast": "SKIP", 
+          "ast": "SKIP",
           "data": [
             {
-              "ast": "VOID", 
-              "data": "<", 
+              "ast": "VOID",
+              "data": "<",
               "type": "STRING"
-            }, 
+            },
             {
-              "ast": "BUILD", 
-              "data": "Ws", 
+              "ast": "BUILD",
+              "data": "Ws",
               "type": "CALL"
-            }, 
+            },
             {
-              "ast": "BUILD", 
-              "data": "Identifier", 
+              "ast": "BUILD",
+              "data": "Identifier",
               "type": "CALL"
-            }, 
+            },
             {
-              "ast": "SKIP", 
+              "ast": "SKIP",
               "data": [
                 {
-                  "ast": "BUILD", 
-                  "data": "Comma", 
+                  "ast": "BUILD",
+                  "data": "Comma",
                   "type": "CALL"
-                }, 
+                },
                 {
-                  "ast": "BUILD", 
-                  "data": "Identifier", 
+                  "ast": "BUILD",
+                  "data": "Identifier",
                   "type": "CALL"
                 }
-              ], 
-              "max": 9223372036854775807, 
-              "min": 0, 
+              ],
+              "max": 9223372036854775807,
+              "min": 0,
               "type": "SEQUENCE"
-            }, 
+            },
             {
-              "ast": "VOID", 
-              "data": ">", 
+              "ast": "VOID",
+              "data": ">",
               "type": "STRING"
             }
-          ], 
-          "max": 1, 
-          "min": 0, 
+          ],
+          "max": 1,
+          "min": 0,
           "type": "SEQUENCE"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Ws", 
+          "ast": "BUILD",
+          "data": "Ws",
           "type": "CALL"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "Alt": {
-    "ast": "VOID", 
+    "ast": "VOID",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD", 
-          "data": "|", 
+          "ast": "BUILD",
+          "data": "|",
           "type": "STRING"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Ws", 
+          "ast": "BUILD",
+          "data": "Ws",
           "type": "CALL"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "Alternation": {
-    "ast": "BUILD", 
+    "ast": "BUILD",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD", 
-          "data": "Sequence", 
+          "ast": "BUILD",
+          "data": "Sequence",
           "type": "CALL"
-        }, 
+        },
         {
-          "ast": "SKIP", 
+          "ast": "SKIP",
           "data": [
             {
-              "ast": "BUILD", 
-              "data": "Alt", 
+              "ast": "BUILD",
+              "data": "Alt",
               "type": "CALL"
-            }, 
+            },
             {
-              "ast": "BUILD", 
-              "data": "Sequence", 
+              "ast": "BUILD",
+              "data": "Sequence",
               "type": "CALL"
             }
-          ], 
-          "max": 9223372036854775807, 
-          "min": 0, 
+          ],
+          "max": 9223372036854775807,
+          "min": 0,
           "type": "SEQUENCE"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "CaseLiteral": {
-    "ast": "BUILD", 
+    "ast": "BUILD",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "VOID", 
-          "data": "\"", 
+          "ast": "VOID",
+          "data": "\"",
           "type": "RANGE"
-        }, 
+        },
         {
-          "ast": "SKIP", 
+          "ast": "SKIP",
           "data": [
             {
-              "ast": "VOID", 
-              "data": "\"", 
-              "predicate": false, 
+              "ast": "VOID",
+              "data": "\"",
+              "predicate": false,
               "type": "RANGE"
-            }, 
+            },
             {
-              "ast": "SKIP", 
+              "ast": "SKIP",
               "data": [
                 {
-                  "ast": "BUILD", 
-                  "data": "LChar", 
+                  "ast": "BUILD",
+                  "data": "LChar",
                   "type": "CALL"
-                }, 
+                },
                 {
-                  "ast": "BUILD", 
-                  "data": "Hex", 
+                  "ast": "BUILD",
+                  "data": "Hex",
                   "type": "CALL"
                 }
-              ], 
+              ],
               "type": "CHOICE"
             }
-          ], 
-          "max": 9223372036854775807, 
-          "min": 1, 
+          ],
+          "max": 9223372036854775807,
+          "min": 1,
           "type": "SEQUENCE"
-        }, 
+        },
         {
-          "ast": "VOID", 
-          "data": "\"", 
+          "ast": "VOID",
+          "data": "\"",
           "type": "RANGE"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Ws", 
+          "ast": "BUILD",
+          "data": "Ws",
           "type": "CALL"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "Char": {
-    "ast": "BUILD", 
+    "ast": "BUILD",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "SKIP", 
+          "ast": "SKIP",
           "data": [
             {
-              "ast": "BUILD", 
-              "data": "\\", 
+              "ast": "BUILD",
+              "data": "\\",
               "type": "STRING"
-            }, 
+            },
             {
-              "ast": "BUILD", 
-              "data": "nrt-]\\", 
+              "ast": "BUILD",
+              "data": "nrt-]\\",
               "type": "RANGE"
             }
-          ], 
+          ],
           "type": "SEQUENCE"
-        }, 
+        },
         {
-          "ast": "SKIP", 
+          "ast": "SKIP",
           "data": [
             {
-              "ast": "VOID", 
-              "data": "\\", 
-              "predicate": false, 
+              "ast": "VOID",
+              "data": "\\",
+              "predicate": false,
               "type": "STRING"
-            }, 
+            },
             {
-              "ast": "VOID", 
-              "data": "]", 
-              "predicate": false, 
+              "ast": "VOID",
+              "data": "]",
+              "predicate": false,
               "type": "STRING"
-            }, 
+            },
             {
-              "ast": "VOID", 
-              "data": "EndOfLine", 
-              "predicate": false, 
+              "ast": "VOID",
+              "data": "EndOfLine",
+              "predicate": false,
               "type": "CALL"
-            }, 
+            },
             {
-              "ast": "BUILD", 
+              "ast": "BUILD",
               "type": "WILDCARD"
             }
-          ], 
+          ],
           "type": "SEQUENCE"
         }
-      ], 
+      ],
       "type": "CHOICE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "CharClass": {
-    "ast": "BUILD", 
+    "ast": "BUILD",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "VOID", 
-          "data": "[", 
+          "ast": "VOID",
+          "data": "[",
           "type": "STRING"
-        }, 
+        },
         {
-          "ast": "SKIP", 
+          "ast": "SKIP",
           "data": [
             {
-              "ast": "VOID", 
-              "data": "]", 
-              "predicate": false, 
+              "ast": "VOID",
+              "data": "]",
+              "predicate": false,
               "type": "STRING"
-            }, 
+            },
             {
-              "ast": "BUILD", 
-              "data": "Range", 
+              "ast": "BUILD",
+              "data": "Range",
               "type": "CALL"
             }
-          ], 
-          "max": 9223372036854775807, 
-          "min": 0, 
+          ],
+          "max": 9223372036854775807,
+          "min": 0,
           "type": "SEQUENCE"
-        }, 
+        },
         {
-          "ast": "VOID", 
-          "data": "]", 
+          "ast": "VOID",
+          "data": "]",
           "type": "STRING"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Ws", 
+          "ast": "BUILD",
+          "data": "Ws",
           "type": "CALL"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "Close": {
-    "ast": "VOID", 
+    "ast": "VOID",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD", 
-          "data": ")", 
+          "ast": "BUILD",
+          "data": ")",
           "type": "STRING"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Ws", 
+          "ast": "BUILD",
+          "data": "Ws",
           "type": "CALL"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "Comma": {
-    "ast": "VOID", 
+    "ast": "VOID",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD", 
-          "data": ",", 
+          "ast": "BUILD",
+          "data": ",",
           "type": "STRING"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Ws", 
+          "ast": "BUILD",
+          "data": "Ws",
           "type": "CALL"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "Definition": {
-    "ast": "BUILD", 
+    "ast": "BUILD",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD", 
-          "data": "Identifier", 
+          "ast": "BUILD",
+          "data": "Identifier",
           "type": "CALL"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Ws", 
+          "ast": "BUILD",
+          "data": "Ws",
           "type": "CALL"
-        }, 
+        },
         {
-          "ast": "SKIP", 
+          "ast": "SKIP",
           "data": [
             {
-              "ast": "BUILD", 
-              "data": "LeftArrow", 
+              "ast": "BUILD",
+              "data": "LeftArrow",
               "type": "CALL"
-            }, 
+            },
             {
-              "ast": "BUILD", 
-              "data": "PruneArrow", 
+              "ast": "BUILD",
+              "data": "PruneArrow",
               "type": "CALL"
-            }, 
+            },
             {
-              "ast": "BUILD", 
-              "data": "VoidArrow", 
+              "ast": "BUILD",
+              "data": "VoidArrow",
               "type": "CALL"
             }
-          ], 
+          ],
           "type": "CHOICE"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Alternation", 
+          "ast": "BUILD",
+          "data": "Alternation",
           "type": "CALL"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Ws", 
+          "ast": "BUILD",
+          "data": "Ws",
           "type": "CALL"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "EndOfLine": {
-    "ast": "VOID", 
+    "ast": "VOID",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD", 
-          "data": "\r\n", 
+          "ast": "BUILD",
+          "data": "\r\n",
           "type": "STRING"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "\n", 
+          "ast": "BUILD",
+          "data": "\n",
           "type": "STRING"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "\r", 
+          "ast": "BUILD",
+          "data": "\r",
           "type": "STRING"
         }
-      ], 
+      ],
       "type": "CHOICE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "Grammar": {
-    "ast": "BUILD", 
+    "ast": "BUILD",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD", 
-          "data": "Ws", 
+          "ast": "BUILD",
+          "data": "Ws",
           "type": "CALL"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Definition", 
-          "max": 9223372036854775807, 
-          "min": 0, 
+          "ast": "BUILD",
+          "data": "Definition",
+          "max": 9223372036854775807,
+          "min": 0,
           "type": "CALL"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "Hex": {
-    "ast": "BUILD", 
+    "ast": "BUILD",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "VOID", 
-          "data": "\\<", 
+          "ast": "VOID",
+          "data": "\\<",
           "type": "STRING"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "0123456789ABCDEFabcdef", 
+          "ast": "BUILD",
+          "data": "0123456789ABCDEFabcdef",
           "type": "RANGE"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "0123456789ABCDEFabcdef", 
+          "ast": "BUILD",
+          "data": "0123456789ABCDEFabcdef",
           "type": "RANGE"
-        }, 
+        },
         {
-          "ast": "VOID", 
-          "data": ">", 
+          "ast": "VOID",
+          "data": ">",
           "type": "STRING"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "Identifier": {
-    "ast": "BUILD", 
+    "ast": "BUILD",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD", 
-          "data": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_", 
+          "ast": "BUILD",
+          "data": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_",
           "type": "RANGE"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-", 
-          "max": 9223372036854775807, 
-          "min": 0, 
+          "ast": "BUILD",
+          "data": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-",
+          "max": 9223372036854775807,
+          "min": 0,
           "type": "RANGE"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Ws", 
+          "ast": "BUILD",
+          "data": "Ws",
           "type": "CALL"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "LChar": {
-    "ast": "BUILD", 
+    "ast": "BUILD",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "SKIP", 
+          "ast": "SKIP",
           "data": [
             {
-              "ast": "BUILD", 
-              "data": "\\", 
+              "ast": "BUILD",
+              "data": "\\",
               "type": "STRING"
-            }, 
+            },
             {
-              "ast": "BUILD", 
-              "data": "nrt'\"\\", 
+              "ast": "BUILD",
+              "data": "nrt'\"\\",
               "type": "RANGE"
             }
-          ], 
+          ],
           "type": "SEQUENCE"
-        }, 
+        },
         {
-          "ast": "SKIP", 
+          "ast": "SKIP",
           "data": [
             {
-              "ast": "VOID", 
-              "data": "\\", 
-              "predicate": false, 
+              "ast": "VOID",
+              "data": "\\",
+              "predicate": false,
               "type": "STRING"
-            }, 
+            },
             {
-              "ast": "VOID", 
-              "data": "EndOfLine", 
-              "predicate": false, 
+              "ast": "VOID",
+              "data": "EndOfLine",
+              "predicate": false,
               "type": "CALL"
-            }, 
+            },
             {
-              "ast": "BUILD", 
+              "ast": "BUILD",
               "type": "WILDCARD"
             }
-          ], 
+          ],
           "type": "SEQUENCE"
         }
-      ], 
+      ],
       "type": "CHOICE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "Label": {
-    "ast": "BUILD", 
+    "ast": "BUILD",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD", 
-          "data": "Identifier", 
+          "ast": "BUILD",
+          "data": "Identifier",
           "type": "CALL"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Ws", 
+          "ast": "BUILD",
+          "data": "Ws",
           "type": "CALL"
-        }, 
+        },
         {
-          "ast": "VOID", 
-          "data": "=", 
+          "ast": "VOID",
+          "data": "=",
           "type": "STRING"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Ws", 
+          "ast": "BUILD",
+          "data": "Ws",
           "type": "CALL"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "LeftArrow": {
-    "ast": "BUILD", 
+    "ast": "BUILD",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "VOID", 
-          "data": "<-", 
+          "ast": "VOID",
+          "data": "<-",
           "type": "STRING"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Ws", 
+          "ast": "BUILD",
+          "data": "Ws",
           "type": "CALL"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "Literal": {
-    "ast": "BUILD", 
+    "ast": "BUILD",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "VOID", 
-          "data": "'", 
+          "ast": "VOID",
+          "data": "'",
           "type": "RANGE"
-        }, 
+        },
         {
-          "ast": "SKIP", 
+          "ast": "SKIP",
           "data": [
             {
-              "ast": "VOID", 
-              "data": "'", 
-              "predicate": false, 
+              "ast": "VOID",
+              "data": "'",
+              "predicate": false,
               "type": "RANGE"
-            }, 
+            },
             {
-              "ast": "SKIP", 
+              "ast": "SKIP",
               "data": [
                 {
-                  "ast": "BUILD", 
-                  "data": "LChar", 
+                  "ast": "BUILD",
+                  "data": "LChar",
                   "type": "CALL"
-                }, 
+                },
                 {
-                  "ast": "BUILD", 
-                  "data": "Hex", 
+                  "ast": "BUILD",
+                  "data": "Hex",
                   "type": "CALL"
                 }
-              ], 
+              ],
               "type": "CHOICE"
             }
-          ], 
-          "max": 9223372036854775807, 
-          "min": 1, 
+          ],
+          "max": 9223372036854775807,
+          "min": 1,
           "type": "SEQUENCE"
-        }, 
+        },
         {
-          "ast": "VOID", 
-          "data": "'", 
+          "ast": "VOID",
+          "data": "'",
           "type": "RANGE"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Ws", 
+          "ast": "BUILD",
+          "data": "Ws",
           "type": "CALL"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "MComment": {
-    "ast": "VOID", 
+    "ast": "VOID",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD", 
-          "data": "/*", 
+          "ast": "BUILD",
+          "data": "/*",
           "type": "STRING"
-        }, 
+        },
         {
-          "ast": "SKIP", 
+          "ast": "SKIP",
           "data": [
             {
-              "ast": "BUILD", 
-              "data": "MComment", 
+              "ast": "BUILD",
+              "data": "MComment",
               "type": "CALL"
-            }, 
+            },
             {
-              "ast": "SKIP", 
+              "ast": "SKIP",
               "data": [
                 {
-                  "ast": "VOID", 
-                  "data": "*/", 
-                  "predicate": false, 
+                  "ast": "VOID",
+                  "data": "*/",
+                  "predicate": false,
                   "type": "STRING"
-                }, 
+                },
                 {
-                  "ast": "BUILD", 
+                  "ast": "BUILD",
                   "type": "WILDCARD"
                 }
-              ], 
+              ],
               "type": "SEQUENCE"
             }
-          ], 
-          "max": 9223372036854775807, 
-          "min": 0, 
+          ],
+          "max": 9223372036854775807,
+          "min": 0,
           "type": "CHOICE"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "*/", 
+          "ast": "BUILD",
+          "data": "*/",
           "type": "STRING"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "Open": {
-    "ast": "VOID", 
+    "ast": "VOID",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD", 
-          "data": "(", 
+          "ast": "BUILD",
+          "data": "(",
           "type": "STRING"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Ws", 
+          "ast": "BUILD",
+          "data": "Ws",
           "type": "CALL"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "Prefix": {
-    "ast": "BUILD", 
+    "ast": "BUILD",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD", 
-          "data": "?*+:&!", 
+          "ast": "BUILD",
+          "data": "?*+:&!",
           "type": "RANGE"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Ws", 
+          "ast": "BUILD",
+          "data": "Ws",
           "type": "CALL"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "PruneArrow": {
-    "ast": "BUILD", 
+    "ast": "BUILD",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "VOID", 
-          "data": "<=", 
+          "ast": "VOID",
+          "data": "<=",
           "type": "STRING"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Ws", 
+          "ast": "BUILD",
+          "data": "Ws",
           "type": "CALL"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "Range": {
-    "ast": "BUILD", 
+    "ast": "BUILD",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "SKIP", 
+          "ast": "SKIP",
           "data": [
             {
-              "ast": "BUILD", 
-              "data": "Char", 
+              "ast": "BUILD",
+              "data": "Char",
               "type": "CALL"
-            }, 
+            },
             {
-              "ast": "BUILD", 
-              "data": "Hex", 
+              "ast": "BUILD",
+              "data": "Hex",
               "type": "CALL"
             }
-          ], 
+          ],
           "type": "CHOICE"
-        }, 
+        },
         {
-          "ast": "SKIP", 
+          "ast": "SKIP",
           "data": [
             {
-              "ast": "VOID", 
-              "data": "-", 
+              "ast": "VOID",
+              "data": "-",
               "type": "STRING"
-            }, 
+            },
             {
-              "ast": "SKIP", 
+              "ast": "SKIP",
               "data": [
                 {
-                  "ast": "BUILD", 
-                  "data": "Char", 
+                  "ast": "BUILD",
+                  "data": "Char",
                   "type": "CALL"
-                }, 
+                },
                 {
-                  "ast": "BUILD", 
-                  "data": "Hex", 
+                  "ast": "BUILD",
+                  "data": "Hex",
                   "type": "CALL"
                 }
-              ], 
+              ],
               "type": "CHOICE"
             }
-          ], 
-          "max": 1, 
-          "min": 0, 
+          ],
+          "max": 1,
+          "min": 0,
           "type": "SEQUENCE"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "SComment": {
-    "ast": "VOID", 
+    "ast": "VOID",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD", 
-          "data": "#", 
+          "ast": "BUILD",
+          "data": "#",
           "type": "STRING"
-        }, 
+        },
         {
-          "ast": "SKIP", 
+          "ast": "SKIP",
           "data": [
             {
-              "ast": "VOID", 
-              "data": "EndOfLine", 
-              "predicate": false, 
+              "ast": "VOID",
+              "data": "EndOfLine",
+              "predicate": false,
               "type": "CALL"
-            }, 
+            },
             {
-              "ast": "BUILD", 
+              "ast": "BUILD",
               "type": "WILDCARD"
             }
-          ], 
-          "max": 9223372036854775807, 
-          "min": 0, 
+          ],
+          "max": 9223372036854775807,
+          "min": 0,
           "type": "SEQUENCE"
-        }, 
+        },
         {
-          "ast": "SKIP", 
+          "ast": "SKIP",
           "data": [
             {
-              "ast": "BUILD", 
-              "data": "EndOfLine", 
+              "ast": "BUILD",
+              "data": "EndOfLine",
               "type": "CALL"
-            }, 
+            },
             {
-              "ast": "VOID", 
-              "predicate": false, 
+              "ast": "VOID",
+              "predicate": false,
               "type": "WILDCARD"
             }
-          ], 
+          ],
           "type": "CHOICE"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "Sequence": {
-    "ast": "BUILD", 
+    "ast": "BUILD",
     "data": {
-      "ast": "BUILD", 
-      "data": "Unit", 
-      "max": 9223372036854775807, 
-      "min": 1, 
+      "ast": "BUILD",
+      "data": "Unit",
+      "max": 9223372036854775807,
+      "min": 1,
       "type": "CALL"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "Unit": {
-    "ast": "BUILD", 
+    "ast": "BUILD",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "SKIP", 
+          "ast": "SKIP",
           "data": [
             {
-              "ast": "BUILD", 
-              "data": "Prefix", 
+              "ast": "BUILD",
+              "data": "Prefix",
               "type": "CALL"
-            }, 
+            },
             {
-              "ast": "BUILD", 
-              "data": "Label", 
+              "ast": "BUILD",
+              "data": "Label",
               "type": "CALL"
             }
-          ], 
-          "max": 9223372036854775807, 
-          "min": 0, 
+          ],
+          "max": 9223372036854775807,
+          "min": 0,
           "type": "CHOICE"
-        }, 
+        },
         {
-          "ast": "SKIP", 
+          "ast": "SKIP",
           "data": [
             {
-              "ast": "SKIP", 
+              "ast": "SKIP",
               "data": [
                 {
-                  "ast": "BUILD", 
-                  "data": "Identifier", 
+                  "ast": "BUILD",
+                  "data": "Identifier",
                   "type": "CALL"
-                }, 
+                },
                 {
-                  "ast": "VOID", 
+                  "ast": "VOID",
                   "data": [
                     {
-                      "ast": "BUILD", 
-                      "data": "LeftArrow", 
+                      "ast": "BUILD",
+                      "data": "LeftArrow",
                       "type": "CALL"
-                    }, 
+                    },
                     {
-                      "ast": "BUILD", 
-                      "data": "PruneArrow", 
+                      "ast": "BUILD",
+                      "data": "PruneArrow",
                       "type": "CALL"
-                    }, 
+                    },
                     {
-                      "ast": "BUILD", 
-                      "data": "VoidArrow", 
+                      "ast": "BUILD",
+                      "data": "VoidArrow",
                       "type": "CALL"
                     }
-                  ], 
-                  "predicate": false, 
+                  ],
+                  "predicate": false,
                   "type": "CHOICE"
                 }
-              ], 
+              ],
               "type": "SEQUENCE"
-            }, 
+            },
             {
-              "ast": "SKIP", 
+              "ast": "SKIP",
               "data": [
                 {
-                  "ast": "BUILD", 
-                  "data": "Open", 
+                  "ast": "BUILD",
+                  "data": "Open",
                   "type": "CALL"
-                }, 
+                },
                 {
-                  "ast": "BUILD", 
-                  "data": "Alternation", 
+                  "ast": "BUILD",
+                  "data": "Alternation",
                   "type": "CALL"
-                }, 
+                },
                 {
-                  "ast": "BUILD", 
-                  "data": "Close", 
+                  "ast": "BUILD",
+                  "data": "Close",
                   "type": "CALL"
                 }
-              ], 
+              ],
               "type": "SEQUENCE"
-            }, 
+            },
             {
-              "ast": "BUILD", 
-              "data": "Action", 
+              "ast": "BUILD",
+              "data": "Action",
               "type": "CALL"
-            }, 
+            },
             {
-              "ast": "BUILD", 
-              "data": "Literal", 
+              "ast": "BUILD",
+              "data": "Literal",
               "type": "CALL"
-            }, 
+            },
             {
-              "ast": "BUILD", 
-              "data": "CaseLiteral", 
+              "ast": "BUILD",
+              "data": "CaseLiteral",
               "type": "CALL"
-            }, 
+            },
             {
-              "ast": "BUILD", 
-              "data": "CharClass", 
+              "ast": "BUILD",
+              "data": "CharClass",
               "type": "CALL"
-            }, 
+            },
             {
-              "ast": "BUILD", 
-              "data": "WildCard", 
+              "ast": "BUILD",
+              "data": "WildCard",
               "type": "CALL"
             }
-          ], 
+          ],
           "type": "CHOICE"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "VoidArrow": {
-    "ast": "BUILD", 
+    "ast": "BUILD",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "VOID", 
-          "data": "<:", 
+          "ast": "VOID",
+          "data": "<:",
           "type": "STRING"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Ws", 
+          "ast": "BUILD",
+          "data": "Ws",
           "type": "CALL"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "WildCard": {
-    "ast": "BUILD", 
+    "ast": "BUILD",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "VOID", 
-          "data": ".", 
+          "ast": "VOID",
+          "data": ".",
           "type": "STRING"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "Ws", 
+          "ast": "BUILD",
+          "data": "Ws",
           "type": "CALL"
         }
-      ], 
+      ],
       "type": "SEQUENCE"
-    }, 
+    },
     "type": "RULE"
-  }, 
+  },
   "Ws": {
-    "ast": "VOID", 
+    "ast": "VOID",
     "data": {
-      "ast": "SKIP", 
+      "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD", 
-          "data": " \t", 
+          "ast": "BUILD",
+          "data": " \t",
           "type": "RANGE"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "EndOfLine", 
+          "ast": "BUILD",
+          "data": "EndOfLine",
           "type": "CALL"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "SComment", 
+          "ast": "BUILD",
+          "data": "SComment",
           "type": "CALL"
-        }, 
+        },
         {
-          "ast": "BUILD", 
-          "data": "MComment", 
+          "ast": "BUILD",
+          "data": "MComment",
           "type": "CALL"
         }
-      ], 
-      "max": 9223372036854775807, 
-      "min": 0, 
+      ],
+      "max": 9223372036854775807,
+      "min": 0,
       "type": "CHOICE"
-    }, 
+    },
     "type": "RULE"
   }
 }
