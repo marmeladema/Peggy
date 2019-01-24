@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name = 'Peggy',
@@ -11,5 +11,7 @@ setup(
     url = 'https://github.com/marmeladema/Peggy/',
     packages = ['peggy', 'peggy.grammars'],
     package_data = {'peggy': ['grammar.json', 'grammars/waxeye.json']},
-    scripts = ['peggyconv', 'peggyparse']
+    scripts = ['peggyconv', 'peggyparse'],
+    python_requires = '>=3',
+    test_suite = 'tests',
 )
