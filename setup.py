@@ -9,7 +9,7 @@ setup(
     author = 'Elie ROUDNINSKI',
     author_email = 'xademax@gmail.com',
     url = 'https://github.com/marmeladema/Peggy/',
-    packages = ['peggy'],
-    package_data={'peggy': ['grammar.json']},
+    packages = ['peggy', 'peggy.grammars'],
+    package_data = {'peggy': ['grammar.json', 'grammars/waxeye.json']},
     scripts = ['peggyconv', 'peggyparse']
 )
