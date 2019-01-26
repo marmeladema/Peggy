@@ -54,13 +54,13 @@ class Peggy:
 		for name, rule in self._grammar.items():
 			self.walk_node(rule, func)
 
-	def state_init(self, step):
+	def state_init(self, step, position, error = None):
 		state = {}
-		state['position'] = 0
+		state['position'] = int(position)
 		state['length'] = 0
 		state['index'] = 0
 		state['count'] = 0
-		state['error'] = None
+		state['error'] = error
 		state['step'] = step
 		try:
 			if step['type'] == 'CALL':
@@ -74,14 +74,17 @@ class Peggy:
 		state['children'] = []
 		return state
 
+	def position(self):
+		if self._stack:
+			return self._stack[-1]['position'] + self._stack[-1]['length']
+		else:
+			return 0
+
 	def push(self, step, memoize = None):
 		if len(self._stack) >= 10240:
 			raise RuntimeError('stack is too deep')
 		state = None
-		if self._stack:
-			position = self._stack[-1]['position'] + self._stack[-1]['length']
-		else:
-			position = 0
+		position = self.position()
 		if memoize is not None and self._stack and self._stack[-1]['step'][
 		    'type'] == 'CALL':
 			rule = self._stack[-1]['step']['data']
@@ -91,24 +94,19 @@ class Peggy:
 				state = memoize[rule][position]
 				if state['error'] is None:
 					print('recursive rule {} detected'.format(rule))
-					state = self.state_init(step)
-					state['position'] = position
-					state['error'] = True
+					state = self.state_init(step, position, error = True)
 					memoize[rule][position] = state
 					self._recstack.append(state)
 				elif self._recstack and position == self._recstack[-1][
 				    'position'] and state is not self._recstack[-1]:
 					print('recursive rule {} retry'.format(rule))
-					state = self.state_init(step)
-					state['position'] = position
+					state = self.state_init(step, position)
 					#raise RuntimeError('left recursive rule {} at {}'.format(rule, position))
 			else:
-				state = self.state_init(step)
-				state['position'] = position
+				state = self.state_init(step, position)
 				memoize[rule][position] = state
 		if state is None:
-			state = self.state_init(step)
-			state['position'] = position
+			state = self.state_init(step, position)
 		self._stack.append(state)
 		return state
 
@@ -148,7 +146,7 @@ class Peggy:
 		    },
 		    memoize = self._memoize
 		)
-		self._last_state = self.state_init({'ast': 'VOID', 'type': 'CALL'})
+		self._last_state = self.state_init({'ast': 'VOID', 'type': 'CALL'}, 0)
 		n = 0
 		while len(self._stack) > 0:
 			head = self._stack[-1]
@@ -268,7 +266,7 @@ class Peggy:
 				else:
 					raise NotImplementedError(head['step'])
 
-				self._last_state = self.state_init(self._last_state['step'])
+				self._last_state = self.state_init(self._last_state['step'], self._last_state['position'])
 				if head is self._stack[-1]:
 					if head['index'] == sys.maxsize:
 						head['error'] = True
