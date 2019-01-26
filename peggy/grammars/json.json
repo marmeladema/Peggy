@@ -7,6 +7,13 @@
         {
           "ast": "VOID",
           "data": "[",
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              91,
+              91
+            ]
+          },
           "type": "STRING"
         },
         {
@@ -51,7 +58,21 @@
           "type": "STRING"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          91,
+          91
+        ]
+      },
       "type": "SEQUENCE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        91,
+        91
+      ]
     },
     "type": "RULE"
   },
@@ -63,6 +84,13 @@
         {
           "ast": "VOID",
           "data": ":",
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              58,
+              58
+            ]
+          },
           "type": "STRING"
         },
         {
@@ -71,7 +99,21 @@
           "type": "CALL"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          58,
+          58
+        ]
+      },
       "type": "SEQUENCE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        58,
+        58
+      ]
     },
     "type": "RULE"
   },
@@ -83,6 +125,13 @@
         {
           "ast": "VOID",
           "data": ",",
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              44,
+              44
+            ]
+          },
           "type": "STRING"
         },
         {
@@ -91,7 +140,21 @@
           "type": "CALL"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          44,
+          44
+        ]
+      },
       "type": "SEQUENCE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        44,
+        44
+      ]
     },
     "type": "RULE"
   },
@@ -106,6 +169,13 @@
             {
               "ast": "VOID",
               "data": "u",
+              "lookahead": {
+                "neg": [],
+                "pos": [
+                  117,
+                  117
+                ]
+              },
               "type": "STRING"
             },
             {
@@ -157,6 +227,13 @@
               "type": "RANGE"
             }
           ],
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              117,
+              117
+            ]
+          },
           "type": "SEQUENCE"
         },
         {
@@ -179,10 +256,73 @@
             116,
             116
           ],
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              34,
+              34,
+              47,
+              47,
+              92,
+              92,
+              98,
+              98,
+              102,
+              102,
+              110,
+              110,
+              114,
+              114,
+              116,
+              116
+            ]
+          },
           "type": "RANGE"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          34,
+          34,
+          47,
+          47,
+          92,
+          92,
+          98,
+          98,
+          102,
+          102,
+          110,
+          110,
+          114,
+          114,
+          116,
+          117
+        ]
+      },
       "type": "CHOICE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        34,
+        34,
+        47,
+        47,
+        92,
+        92,
+        98,
+        98,
+        102,
+        102,
+        110,
+        110,
+        114,
+        114,
+        116,
+        117
+      ]
     },
     "type": "RULE"
   },
@@ -194,6 +334,13 @@
         {
           "ast": "BUILD",
           "data": "Ws",
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              0,
+              1114111
+            ]
+          },
           "type": "CALL"
         },
         {
@@ -202,7 +349,21 @@
           "type": "CALL"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          0,
+          1114111
+        ]
+      },
       "type": "SEQUENCE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        0,
+        1114111
+      ]
     },
     "type": "RULE"
   },
@@ -214,20 +375,63 @@
         {
           "ast": "VOID",
           "data": "true",
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              116,
+              116
+            ]
+          },
           "type": "STRING"
         },
         {
           "ast": "VOID",
           "data": "false",
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              102,
+              102
+            ]
+          },
           "type": "STRING"
         },
         {
           "ast": "VOID",
           "data": "null",
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              110,
+              110
+            ]
+          },
           "type": "STRING"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          102,
+          102,
+          110,
+          110,
+          116,
+          116
+        ]
+      },
       "type": "CHOICE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        102,
+        102,
+        110,
+        110,
+        116,
+        116
+      ]
     },
     "type": "RULE"
   },
@@ -239,6 +443,13 @@
         {
           "ast": "BUILD",
           "data": "String",
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              34,
+              34
+            ]
+          },
           "type": "CALL"
         },
         {
@@ -257,7 +468,21 @@
           "type": "CALL"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          34,
+          34
+        ]
+      },
       "type": "SEQUENCE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        34,
+        34
+      ]
     },
     "type": "RULE"
   },
@@ -269,6 +494,13 @@
         {
           "ast": "VOID",
           "data": "-",
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              0,
+              1114111
+            ]
+          },
           "max": 1,
           "min": 0,
           "type": "STRING"
@@ -279,6 +511,13 @@
             {
               "ast": "VOID",
               "data": "0",
+              "lookahead": {
+                "neg": [],
+                "pos": [
+                  48,
+                  48
+                ]
+              },
               "type": "STRING"
             },
             {
@@ -290,6 +529,13 @@
                     49,
                     57
                   ],
+                  "lookahead": {
+                    "neg": [],
+                    "pos": [
+                      49,
+                      57
+                    ]
+                  },
                   "type": "RANGE"
                 },
                 {
@@ -303,9 +549,23 @@
                   "type": "RANGE"
                 }
               ],
+              "lookahead": {
+                "neg": [],
+                "pos": [
+                  49,
+                  57
+                ]
+              },
               "type": "SEQUENCE"
             }
           ],
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              48,
+              57
+            ]
+          },
           "type": "CHOICE"
         },
         {
@@ -372,7 +632,21 @@
           "type": "SEQUENCE"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          0,
+          1114111
+        ]
+      },
       "type": "SEQUENCE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        0,
+        1114111
+      ]
     },
     "type": "RULE"
   },
@@ -384,6 +658,13 @@
         {
           "ast": "VOID",
           "data": "{",
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              123,
+              123
+            ]
+          },
           "type": "STRING"
         },
         {
@@ -428,7 +709,21 @@
           "type": "STRING"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          123,
+          123
+        ]
+      },
       "type": "SEQUENCE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        123,
+        123
+      ]
     },
     "type": "RULE"
   },
@@ -440,6 +735,13 @@
         {
           "ast": "VOID",
           "data": "\"",
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              34,
+              34
+            ]
+          },
           "type": "STRING"
         },
         {
@@ -494,7 +796,21 @@
           "type": "STRING"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          34,
+          34
+        ]
+      },
       "type": "SEQUENCE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        34,
+        34
+      ]
     },
     "type": "RULE"
   },
@@ -509,29 +825,75 @@
             {
               "ast": "BUILD",
               "data": "Object",
+              "lookahead": {
+                "neg": [],
+                "pos": [
+                  123,
+                  123
+                ]
+              },
               "type": "CALL"
             },
             {
               "ast": "BUILD",
               "data": "Array",
+              "lookahead": {
+                "neg": [],
+                "pos": [
+                  91,
+                  91
+                ]
+              },
               "type": "CALL"
             },
             {
               "ast": "BUILD",
               "data": "Number",
+              "lookahead": {
+                "neg": [],
+                "pos": [
+                  0,
+                  1114111
+                ]
+              },
               "type": "CALL"
             },
             {
               "ast": "BUILD",
               "data": "String",
+              "lookahead": {
+                "neg": [],
+                "pos": [
+                  34,
+                  34
+                ]
+              },
               "type": "CALL"
             },
             {
               "ast": "BUILD",
               "data": "Literal",
+              "lookahead": {
+                "neg": [],
+                "pos": [
+                  102,
+                  102,
+                  110,
+                  110,
+                  116,
+                  116
+                ]
+              },
               "type": "CALL"
             }
           ],
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              0,
+              1114111
+            ]
+          },
           "type": "CHOICE"
         },
         {
@@ -540,7 +902,21 @@
           "type": "CALL"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          0,
+          1114111
+        ]
+      },
       "type": "SEQUENCE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        0,
+        1114111
+      ]
     },
     "type": "RULE"
   },
@@ -556,9 +932,23 @@
         32,
         32
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          0,
+          1114111
+        ]
+      },
       "max": 9223372036854775807,
       "min": 0,
       "type": "RANGE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        0,
+        1114111
+      ]
     },
     "type": "RULE"
   }

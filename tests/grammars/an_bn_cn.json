@@ -7,6 +7,13 @@
         {
           "ast": "VOID",
           "data": "a",
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              97,
+              97
+            ]
+          },
           "type": "STRING"
         },
         {
@@ -22,7 +29,21 @@
           "type": "STRING"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          97,
+          97
+        ]
+      },
       "type": "SEQUENCE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        97,
+        97
+      ]
     },
     "type": "RULE"
   },
@@ -34,6 +55,13 @@
         {
           "ast": "VOID",
           "data": "b",
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              98,
+              98
+            ]
+          },
           "type": "STRING"
         },
         {
@@ -49,7 +77,21 @@
           "type": "STRING"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          98,
+          98
+        ]
+      },
       "type": "SEQUENCE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        98,
+        98
+      ]
     },
     "type": "RULE"
   },
@@ -64,6 +106,13 @@
             {
               "ast": "BUILD",
               "data": "A",
+              "lookahead": {
+                "neg": [],
+                "pos": [
+                  97,
+                  97
+                ]
+              },
               "type": "CALL"
             },
             {
@@ -72,12 +121,26 @@
               "type": "STRING"
             }
           ],
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              97,
+              97
+            ]
+          },
           "predicate": true,
           "type": "SEQUENCE"
         },
         {
           "ast": "VOID",
           "data": "a",
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              97,
+              97
+            ]
+          },
           "max": 9223372036854775807,
           "min": 1,
           "type": "STRING"
@@ -93,7 +156,21 @@
           "type": "WILDCARD"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          97,
+          97
+        ]
+      },
       "type": "SEQUENCE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        97,
+        97
+      ]
     },
     "type": "RULE"
   }

@@ -4,7 +4,25 @@
     "data": {
       "ast": "BUILD",
       "data": "Sum",
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          40,
+          40,
+          48,
+          57
+        ]
+      },
       "type": "CALL"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        40,
+        40,
+        48,
+        57
+      ]
     },
     "type": "RULE"
   },
@@ -16,6 +34,15 @@
         {
           "ast": "BUILD",
           "data": "Value",
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              40,
+              40,
+              48,
+              57
+            ]
+          },
           "type": "CALL"
         },
         {
@@ -48,7 +75,25 @@
           "type": "SEQUENCE"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          40,
+          40,
+          48,
+          57
+        ]
+      },
       "type": "SEQUENCE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        40,
+        40,
+        48,
+        57
+      ]
     },
     "type": "RULE"
   },
@@ -60,6 +105,15 @@
         {
           "ast": "BUILD",
           "data": "Product",
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              40,
+              40,
+              48,
+              57
+            ]
+          },
           "type": "CALL"
         },
         {
@@ -92,7 +146,25 @@
           "type": "SEQUENCE"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          40,
+          40,
+          48,
+          57
+        ]
+      },
       "type": "SEQUENCE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        40,
+        40,
+        48,
+        57
+      ]
     },
     "type": "RULE"
   },
@@ -107,6 +179,13 @@
             48,
             57
           ],
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              48,
+              57
+            ]
+          },
           "max": 9223372036854775807,
           "min": 1,
           "type": "RANGE"
@@ -117,6 +196,13 @@
             {
               "ast": "VOID",
               "data": "(",
+              "lookahead": {
+                "neg": [],
+                "pos": [
+                  40,
+                  40
+                ]
+              },
               "type": "STRING"
             },
             {
@@ -130,10 +216,35 @@
               "type": "STRING"
             }
           ],
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              40,
+              40
+            ]
+          },
           "type": "SEQUENCE"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          40,
+          40,
+          48,
+          57
+        ]
+      },
       "type": "CHOICE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        40,
+        40,
+        48,
+        57
+      ]
     },
     "type": "RULE"
   }

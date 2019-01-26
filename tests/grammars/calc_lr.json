@@ -7,20 +7,61 @@
         {
           "ast": "BUILD",
           "data": "Product",
+          "lookahead": {
+            "neg": [],
+            "pos": []
+          },
           "type": "CALL"
         },
         {
           "ast": "BUILD",
           "data": "Sum",
+          "lookahead": {
+            "neg": [],
+            "pos": []
+          },
           "type": "CALL"
         },
         {
           "ast": "BUILD",
           "data": "Value",
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              40,
+              40,
+              46,
+              46,
+              48,
+              57
+            ]
+          },
           "type": "CALL"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          40,
+          40,
+          46,
+          46,
+          48,
+          57
+        ]
+      },
       "type": "CHOICE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        40,
+        40,
+        46,
+        46,
+        48,
+        57
+      ]
     },
     "type": "RULE"
   },
@@ -32,6 +73,17 @@
         {
           "ast": "BUILD",
           "data": "Expr",
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              40,
+              40,
+              46,
+              46,
+              48,
+              57
+            ]
+          },
           "type": "CALL"
         },
         {
@@ -64,7 +116,29 @@
           "type": "SEQUENCE"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          40,
+          40,
+          46,
+          46,
+          48,
+          57
+        ]
+      },
       "type": "SEQUENCE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        40,
+        40,
+        46,
+        46,
+        48,
+        57
+      ]
     },
     "type": "RULE"
   },
@@ -76,6 +150,10 @@
         {
           "ast": "BUILD",
           "data": "Expr",
+          "lookahead": {
+            "neg": [],
+            "pos": []
+          },
           "type": "CALL"
         },
         {
@@ -108,7 +186,15 @@
           "type": "SEQUENCE"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": []
+      },
       "type": "SEQUENCE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": []
     },
     "type": "RULE"
   },
@@ -125,6 +211,15 @@
             48,
             57
           ],
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              46,
+              46,
+              48,
+              57
+            ]
+          },
           "max": 9223372036854775807,
           "min": 1,
           "type": "RANGE"
@@ -135,6 +230,13 @@
             {
               "ast": "VOID",
               "data": "(",
+              "lookahead": {
+                "neg": [],
+                "pos": [
+                  40,
+                  40
+                ]
+              },
               "type": "STRING"
             },
             {
@@ -148,10 +250,39 @@
               "type": "STRING"
             }
           ],
+          "lookahead": {
+            "neg": [],
+            "pos": [
+              40,
+              40
+            ]
+          },
           "type": "SEQUENCE"
         }
       ],
+      "lookahead": {
+        "neg": [],
+        "pos": [
+          40,
+          40,
+          46,
+          46,
+          48,
+          57
+        ]
+      },
       "type": "CHOICE"
+    },
+    "lookahead": {
+      "neg": [],
+      "pos": [
+        40,
+        40,
+        46,
+        46,
+        48,
+        57
+      ]
     },
     "type": "RULE"
   }

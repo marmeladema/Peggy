@@ -38,4 +38,5 @@ def parse(grammar, data, debug = False):
 
 def convert(grammar, data, ast):
 	parser = peggy.Peggy(all[grammar]['convert'](ast['nodes'][0], data))
+	parser.compute_lookahead()
 	return parser

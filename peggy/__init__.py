@@ -116,6 +116,65 @@ class Peggy:
 		for name, rule in self._grammar.items():
 			self.walk_node(rule, func)
 
+	def compute_node_lookahead(self, node):
+		if 'lookahead' in node:
+			return node['lookahead']
+		node['lookahead'] = {
+		    'pos': '',
+		    'neg': '',
+		}
+		lookahead = {
+		    'pos': Range(),
+		    'neg': Range(),
+		}
+		if node['type'] == 'RULE':
+			tmp = self.compute_node_lookahead(node['data'])
+			lookahead['pos'].extend(tmp['pos'])
+			lookahead['neg'].extend(tmp['neg'])
+		elif node['type'] == 'SEQUENCE':
+			for child in node['data']:
+				tmp = self.compute_node_lookahead(child)
+				lookahead['pos'].extend(tmp['pos'])
+				lookahead['neg'].extend(tmp['neg'])
+				min = child.get('min', 1)
+				predicate = child.get('predicate', None)
+				if min != 0 and predicate is None:
+					break
+		elif node['type'] == 'CHOICE':
+			for child in node['data']:
+				tmp = self.compute_node_lookahead(child)
+				lookahead['pos'].extend(tmp['pos'])
+				lookahead['neg'].extend(tmp['neg'])
+		elif node['type'] == 'RANGE':
+			lookahead['pos'].extend(node['data'])
+		elif node['type'] == 'STRING':
+			lookahead['pos'].append(ord(node['data'][0]))
+		elif node['type'] == 'STRINGI':
+			lookahead['pos'].append(ord(node['data'][0].lower()))
+			lookahead['pos'].append(ord(node['data'][0].upper()))
+		elif node['type'] == 'CALL':
+			tmp = self.compute_node_lookahead(self._grammar[node['data']])
+			lookahead['pos'].extend(tmp['pos'])
+			lookahead['neg'].extend(tmp['neg'])
+		elif node['type'] == 'WILDCARD':
+			lookahead['pos'].add(0, 0x10FFFF)
+		else:
+			raise RuntimeError('Invalid node type {}'.format(node['type']))
+		if node.get('min', 1) == 0:
+			lookahead['pos'].add(0, 0x10FFFF)
+		if node.get('predicate', None) is False:
+			node['lookahead']['neg'] = lookahead['pos']
+			node['lookahead']['pos'] = lookahead['neg']
+		else:
+			node['lookahead']['pos'] = lookahead['pos']
+			node['lookahead']['neg'] = lookahead['neg']
+		return node['lookahead']
+
+	def compute_lookahead(self):
+		for name, rule in self._grammar.items():
+			if 'lookahead' not in self._grammar[name]:
+				self.compute_node_lookahead(rule)
+
 	def state_init(self, step, position, error = None):
 		state = {}
 		state['position'] = int(position)
@@ -147,8 +206,17 @@ class Peggy:
 			raise RuntimeError('stack is too deep')
 		state = None
 		position = self.position()
-		if memoize is not None and self._stack and self._stack[-1]['step'][
-		    'type'] == 'CALL':
+		c = None
+		if position < len(self._input):
+			c = self._input[position]
+		pos = step.get('lookahead', {}).get('pos')
+		neg = step.get('lookahead', {}).get('neg')
+		lookahead = c is None
+		lookahead = lookahead or (pos and ord(c) in Range(pos))
+		lookahead = lookahead or (neg and ord(c) not in Range(neg))
+		lookahead = lookahead or (not pos and not neg)
+		if lookahead and memoize is not None and self._stack and self._stack[
+		    -1]['step']['type'] == 'CALL':
 			rule = self._stack[-1]['step']['data']
 			if rule not in memoize:
 				memoize[rule] = {}
@@ -169,8 +237,10 @@ class Peggy:
 			else:
 				state = self.state_init(step, position)
 				memoize[rule][position] = state
-		if state is None:
-			state = self.state_init(step, position)
+		else:
+			state = self.state_init(
+			    step, position, error = None if lookahead else True
+			)
 		self._stack.append(state)
 		return state
 
@@ -203,6 +273,7 @@ class Peggy:
 		self._recstack = []
 		self._count = 0
 		self._memoize = {}
+		self._input = input
 		self.push(
 		    {
 		        'type': 'CALL',
@@ -346,7 +417,9 @@ class Peggy:
 				else:
 					raise NotImplementedError(head['step'])
 
-				self._last_state = self.state_init(self._last_state['step'], self._last_state['position'])
+				self._last_state = self.state_init(
+				    self._last_state['step'], self._last_state['position']
+				)
 				if head is self._stack[-1]:
 					if head['index'] == sys.maxsize:
 						head['error'] = True
