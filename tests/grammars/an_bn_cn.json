@@ -1,0 +1,100 @@
+{
+  "A": {
+    "ast": "BUILD",
+    "data": {
+      "ast": "SKIP",
+      "data": [
+        {
+          "ast": "BUILD",
+          "data": "a",
+          "type": "STRING"
+        },
+        {
+          "ast": "BUILD",
+          "data": "A",
+          "max": 1,
+          "min": 0,
+          "type": "CALL"
+        },
+        {
+          "ast": "BUILD",
+          "data": "b",
+          "type": "STRING"
+        }
+      ],
+      "type": "SEQUENCE"
+    },
+    "type": "RULE"
+  },
+  "B": {
+    "ast": "BUILD",
+    "data": {
+      "ast": "SKIP",
+      "data": [
+        {
+          "ast": "BUILD",
+          "data": "b",
+          "type": "STRING"
+        },
+        {
+          "ast": "BUILD",
+          "data": "B",
+          "max": 1,
+          "min": 0,
+          "type": "CALL"
+        },
+        {
+          "ast": "BUILD",
+          "data": "c",
+          "type": "STRING"
+        }
+      ],
+      "type": "SEQUENCE"
+    },
+    "type": "RULE"
+  },
+  "S": {
+    "ast": "BUILD",
+    "data": {
+      "ast": "SKIP",
+      "data": [
+        {
+          "ast": "VOID",
+          "data": [
+            {
+              "ast": "BUILD",
+              "data": "A",
+              "type": "CALL"
+            },
+            {
+              "ast": "BUILD",
+              "data": "c",
+              "type": "STRING"
+            }
+          ],
+          "predicate": true,
+          "type": "SEQUENCE"
+        },
+        {
+          "ast": "BUILD",
+          "data": "a",
+          "max": 9223372036854775807,
+          "min": 1,
+          "type": "STRING"
+        },
+        {
+          "ast": "BUILD",
+          "data": "B",
+          "type": "CALL"
+        },
+        {
+          "ast": "VOID",
+          "predicate": false,
+          "type": "WILDCARD"
+        }
+      ],
+      "type": "SEQUENCE"
+    },
+    "type": "RULE"
+  }
+}
