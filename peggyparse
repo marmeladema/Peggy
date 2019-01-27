@@ -17,8 +17,8 @@ args = parser.parse_args()
 
 data = args.input.read()
 
-pparser = peggy.Peggy(args.grammar)
-ast = pparser.parse(data, args.rule, debug = args.debug)
+pparser = peggy.Peggy(args.grammar, debug = args.debug)
+ast = pparser.parse(data, args.rule)
 if args.debug:
 	pprint.pprint(ast)
 if ast['error'] is False:

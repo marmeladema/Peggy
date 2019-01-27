@@ -17,7 +17,7 @@ ast_priority = {
 
 
 class Peggy:
-	def __init__(self, grammar):
+	def __init__(self, grammar, debug = False):
 
 		jsonschema.validate(grammar, grammar_schema)
 
@@ -27,6 +27,7 @@ class Peggy:
 		self._count = 0
 		self._last_state = None
 		self._error = None
+		self._debug = debug
 
 	def json(self, *args, **kwargs):
 		return json.dumps(self._grammar, *args, **kwargs)
@@ -93,13 +94,15 @@ class Peggy:
 			if position in memoize[rule]:
 				state = memoize[rule][position]
 				if state['error'] is None:
-					print('recursive rule {} detected'.format(rule))
+					if self._debug:
+						print('recursive rule {} detected'.format(rule))
 					state = self.state_init(step, position, error = True)
 					memoize[rule][position] = state
 					self._recstack.append(state)
 				elif self._recstack and position == self._recstack[-1][
 				    'position'] and state is not self._recstack[-1]:
-					print('recursive rule {} retry'.format(rule))
+					if self._debug:
+						print('recursive rule {} retry'.format(rule))
 					state = self.state_init(step, position)
 					#raise RuntimeError('left recursive rule {} at {}'.format(rule, position))
 			else:
@@ -124,7 +127,8 @@ class Peggy:
 						self._recstack[-1] = state
 						self.push(state['step'])
 						memoize[rule][position] = state
-						print('increase rule {} bound'.format(rule))
+						if self._debug:
+							print('increase rule {} bound'.format(rule))
 						return self._last_state
 					memoize[rule][position] = state
 				else:
@@ -133,7 +137,7 @@ class Peggy:
 					state = memoize[rule][position]
 		return state
 
-	def parse(self, input, name, debug = False):
+	def parse(self, input, name):
 		self._stack = []
 		self._recstack = []
 		self._count = 0
@@ -174,7 +178,7 @@ class Peggy:
 			#if last_state.get('recursive', False):
 			#	last_state['error'] = None
 
-			if debug:
+			if self._debug:
 				print('########################')
 				print('position:', position)
 				if position < len(input):
@@ -222,8 +226,6 @@ class Peggy:
 					data_len = len(head['step']['data'])
 					if position + data_len <= len(input) and input[
 					    position:position + data_len] == head['step']['data']:
-						if debug:
-							print('string', head['step']['data'], 'matched')
 						head['length'] += data_len
 						head['index'] = 0
 					else:
@@ -277,7 +279,7 @@ class Peggy:
 						    'min', 1
 						) and head['count'] <= head['step'].get('max', 1):
 							head['error'] = False
-						if debug:
+						if self._debug:
 							print(
 							    head['step'],
 							    'of length %d has failed at %d' % (
@@ -304,7 +306,7 @@ class Peggy:
 							head['children'] = []
 						head['count'] += 1
 						if head['count'] >= head['step'].get('max', 1):
-							if debug:
+							if self._debug:
 								print(
 								    head['step'], 'has succeeded at %d' %
 								    (head['position'], )

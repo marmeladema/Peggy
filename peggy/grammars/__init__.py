@@ -21,8 +21,8 @@ all = {
 
 
 def parse(grammar, data, debug = False):
-	parser = peggy.Peggy(all[grammar]['tree'])
-	ast = parser.parse(data, all[grammar]['rule'], debug = debug)
+	parser = peggy.Peggy(all[grammar]['tree'], debug = debug)
+	ast = parser.parse(data, all[grammar]['rule'])
 	return ast
 
 
