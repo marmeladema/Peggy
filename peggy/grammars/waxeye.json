@@ -76,7 +76,7 @@
       "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": "|",
           "type": "STRING"
         },
@@ -187,12 +187,12 @@
           "ast": "SKIP",
           "data": [
             {
-              "ast": "BUILD",
+              "ast": "VOID",
               "data": "\\",
               "type": "STRING"
             },
             {
-              "ast": "BUILD",
+              "ast": "VOID",
               "data": "nrt-]\\",
               "type": "RANGE"
             }
@@ -221,7 +221,7 @@
               "type": "CALL"
             },
             {
-              "ast": "BUILD",
+              "ast": "VOID",
               "type": "WILDCARD"
             }
           ],
@@ -282,7 +282,7 @@
       "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": ")",
           "type": "STRING"
         },
@@ -302,7 +302,7 @@
       "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": ",",
           "type": "STRING"
         },
@@ -373,17 +373,17 @@
       "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": "\r\n",
           "type": "STRING"
         },
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": "\n",
           "type": "STRING"
         },
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": "\r",
           "type": "STRING"
         }
@@ -425,12 +425,12 @@
           "type": "STRING"
         },
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": "0123456789ABCDEFabcdef",
           "type": "RANGE"
         },
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": "0123456789ABCDEFabcdef",
           "type": "RANGE"
         },
@@ -450,12 +450,12 @@
       "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_",
           "type": "RANGE"
         },
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-",
           "max": 9223372036854775807,
           "min": 0,
@@ -480,12 +480,12 @@
           "ast": "SKIP",
           "data": [
             {
-              "ast": "BUILD",
+              "ast": "VOID",
               "data": "\\",
               "type": "STRING"
             },
             {
-              "ast": "BUILD",
+              "ast": "VOID",
               "data": "nrt'\"\\",
               "type": "RANGE"
             }
@@ -508,7 +508,7 @@
               "type": "CALL"
             },
             {
-              "ast": "BUILD",
+              "ast": "VOID",
               "type": "WILDCARD"
             }
           ],
@@ -630,7 +630,7 @@
       "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": "/*",
           "type": "STRING"
         },
@@ -652,7 +652,7 @@
                   "type": "STRING"
                 },
                 {
-                  "ast": "BUILD",
+                  "ast": "VOID",
                   "type": "WILDCARD"
                 }
               ],
@@ -664,7 +664,7 @@
           "type": "CHOICE"
         },
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": "*/",
           "type": "STRING"
         }
@@ -679,7 +679,7 @@
       "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": "(",
           "type": "STRING"
         },
@@ -699,7 +699,7 @@
       "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": "?*+:&!",
           "type": "RANGE"
         },
@@ -794,7 +794,7 @@
       "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": "#",
           "type": "STRING"
         },
@@ -808,7 +808,7 @@
               "type": "CALL"
             },
             {
-              "ast": "BUILD",
+              "ast": "VOID",
               "type": "WILDCARD"
             }
           ],
@@ -1007,7 +1007,7 @@
       "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": " \t",
           "type": "RANGE"
         },

@@ -56,12 +56,14 @@ def unit2json(ast, data):
 		unit['data'] = peggy.astdata(
 		    ast['children'][0], data
 		).strip()[1:-1].encode('utf-8').decode('unicode_escape')
+		unit['ast'] = 'VOID'
 	elif ast['children'][0]['step']['type'] == 'CALL' and ast['children'][0][
 	    'step']['data'] == 'CaseLiteral':
 		unit['type'] = 'STRING'
 		unit['data'] = peggy.astdata(
 		    ast['children'][0], data
 		).strip()[1:-1].encode('utf-8').decode('unicode_escape')
+		unit['ast'] = 'VOID'
 	elif ast['children'][0]['step']['type'] == 'CALL' and ast['children'][0][
 	    'step']['data'] == 'Identifier':
 		unit['type'] = 'CALL'
@@ -73,9 +75,11 @@ def unit2json(ast, data):
 		unit['data'] = parse_range(
 		    peggy.astdata(ast['children'][0], data).strip()[1:-1]
 		)
+		unit['ast'] = 'VOID'
 	elif ast['children'][0]['step']['type'] == 'CALL' and ast['children'][0][
 	    'step']['data'] == 'WildCard':
 		unit['type'] = 'WILDCARD'
+		unit['ast'] = 'VOID'
 	else:
 		unit = node2json(ast['children'][0], data)
 
@@ -172,7 +176,8 @@ def grammar2json(ast, data):
 		    'type': 'RULE',
 		    'ast': {
 		        'LeftArrow': 'BUILD',
-		        'VoidArrow': 'VOID'
+		        'VoidArrow': 'VOID',
+		        'PruneArrow': 'SKIP',
 		    }[arrow['step']['data']],
 		    'data': node2json(definition['children'][2], data),
 		}
