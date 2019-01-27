@@ -4,6 +4,7 @@ import peggy
 import peggy.grammars
 import tempfile
 import difflib
+import json
 
 
 class TestWaxeye(unittest.TestCase):
@@ -21,9 +22,8 @@ class TestWaxeye(unittest.TestCase):
 				self.fail('\n' + diff)
 
 	def test_idempotence(self):
-		src_parser = peggy.Peggy(peggy.grammars.all['waxeye']['tree'])
 		data = peggy.grammars.all['waxeye']['source']
-		ast = src_parser.parse(data, peggy.grammars.all['waxeye']['rule'])
+		ast = peggy.grammars.parse('waxeye', data)
 
 		if ast['error'] is True:
 			peggy.astprint(ast['nodes'][0], data)
@@ -37,15 +37,17 @@ class TestWaxeye(unittest.TestCase):
 			    .format(ast['length'], len(data))
 			)
 
-		dst_parser = peggy.Peggy(
-		    peggy.grammars.all['waxeye']['transform'](ast['nodes'][0], data)
-		)
+		parser = peggy.grammars.convert('waxeye', data, ast)
 		with tempfile.NamedTemporaryFile(
 		) as src_fd, tempfile.NamedTemporaryFile() as dst_fd:
 			src_fd.write(
-			    src_parser.json(sort_keys = True, indent = 2).encode('utf-8')
+			    json.dumps(
+			        peggy.grammars.all['waxeye']['tree'],
+			        sort_keys = True,
+			        indent = 2
+			    ).encode('utf-8')
 			)
 			dst_fd.write(
-			    dst_parser.json(sort_keys = True, indent = 2).encode('utf-8')
+			    parser.json(sort_keys = True, indent = 2).encode('utf-8')
 			)
 			self.assertUnifiedDiff(src_fd.name, dst_fd.name)

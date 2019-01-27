@@ -1,6 +1,7 @@
 import json
 import os
 
+import peggy
 from . import waxeye
 
 all = {
@@ -13,7 +14,18 @@ all = {
         ),
         'rule':
         'Grammar',
-        'transform':
+        'convert':
         waxeye.grammar2json,
     },
 }
+
+
+def parse(grammar, data, debug = False):
+	parser = peggy.Peggy(all[grammar]['tree'])
+	ast = parser.parse(data, all[grammar]['rule'], debug = debug)
+	return ast
+
+
+def convert(grammar, data, ast):
+	parser = peggy.Peggy(all[grammar]['convert'](ast['nodes'][0], data))
+	return parser
