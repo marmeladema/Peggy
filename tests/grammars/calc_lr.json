@@ -1,0 +1,153 @@
+{
+  "Expr": {
+    "ast": "BUILD",
+    "data": {
+      "ast": "SKIP",
+      "data": [
+        {
+          "ast": "BUILD",
+          "data": "Product",
+          "type": "CALL"
+        },
+        {
+          "ast": "BUILD",
+          "data": "Sum",
+          "type": "CALL"
+        },
+        {
+          "ast": "BUILD",
+          "data": "Value",
+          "type": "CALL"
+        }
+      ],
+      "type": "CHOICE"
+    },
+    "type": "RULE"
+  },
+  "Product": {
+    "ast": "BUILD",
+    "data": {
+      "ast": "SKIP",
+      "data": [
+        {
+          "ast": "BUILD",
+          "data": "Expr",
+          "type": "CALL"
+        },
+        {
+          "ast": "SKIP",
+          "data": [
+            {
+              "ast": "SKIP",
+              "data": [
+                {
+                  "ast": "BUILD",
+                  "data": "*",
+                  "type": "STRING"
+                },
+                {
+                  "ast": "BUILD",
+                  "data": "/",
+                  "type": "STRING"
+                }
+              ],
+              "type": "CHOICE"
+            },
+            {
+              "ast": "BUILD",
+              "data": "Expr",
+              "type": "CALL"
+            }
+          ],
+          "max": 9223372036854775807,
+          "min": 1,
+          "type": "SEQUENCE"
+        }
+      ],
+      "type": "SEQUENCE"
+    },
+    "type": "RULE"
+  },
+  "Sum": {
+    "ast": "BUILD",
+    "data": {
+      "ast": "SKIP",
+      "data": [
+        {
+          "ast": "BUILD",
+          "data": "Expr",
+          "type": "CALL"
+        },
+        {
+          "ast": "SKIP",
+          "data": [
+            {
+              "ast": "SKIP",
+              "data": [
+                {
+                  "ast": "BUILD",
+                  "data": "+",
+                  "type": "STRING"
+                },
+                {
+                  "ast": "BUILD",
+                  "data": "-",
+                  "type": "STRING"
+                }
+              ],
+              "type": "CHOICE"
+            },
+            {
+              "ast": "BUILD",
+              "data": "Expr",
+              "type": "CALL"
+            }
+          ],
+          "max": 9223372036854775807,
+          "min": 1,
+          "type": "SEQUENCE"
+        }
+      ],
+      "type": "SEQUENCE"
+    },
+    "type": "RULE"
+  },
+  "Value": {
+    "ast": "BUILD",
+    "data": {
+      "ast": "SKIP",
+      "data": [
+        {
+          "ast": "BUILD",
+          "data": "0123456789.",
+          "max": 9223372036854775807,
+          "min": 1,
+          "type": "RANGE"
+        },
+        {
+          "ast": "SKIP",
+          "data": [
+            {
+              "ast": "BUILD",
+              "data": "(",
+              "type": "STRING"
+            },
+            {
+              "ast": "BUILD",
+              "data": "Expr",
+              "type": "CALL"
+            },
+            {
+              "ast": "BUILD",
+              "data": ")",
+              "type": "STRING"
+            }
+          ],
+          "type": "SEQUENCE"
+        }
+      ],
+      "type": "CHOICE"
+    },
+    "type": "RULE"
+  }
+}
