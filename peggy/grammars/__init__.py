@@ -1,21 +1,32 @@
-import json
+from json import load as json_load
 import os
 
 import peggy
-from . import waxeye
+from .json import grammar2json as json_grammar2json
+from .waxeye import grammar2json as waxeye_grammar2json
 
 all = {
+    'json': {
+        'source':
+        open(os.path.join(os.path.dirname(__file__), 'json.json')).read(),
+        'tree':
+        json_load(open(os.path.join(os.path.dirname(__file__), 'json.json'))),
+        'rule':
+        'Json',
+        'convert':
+        json_grammar2json,
+    },
     'waxeye': {
         'source':
         open(os.path.join(os.path.dirname(__file__), 'waxeye.peg')).read(),
         'tree':
-        json.load(
+        json_load(
             open(os.path.join(os.path.dirname(__file__), 'waxeye.json'))
         ),
         'rule':
         'Grammar',
         'convert':
-        waxeye.grammar2json,
+        waxeye_grammar2json,
     },
 }
 

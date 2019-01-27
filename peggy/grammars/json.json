@@ -1,0 +1,491 @@
+{
+  "Array": {
+    "ast": "BUILD",
+    "data": {
+      "ast": "SKIP",
+      "data": [
+        {
+          "ast": "VOID",
+          "data": "[",
+          "type": "STRING"
+        },
+        {
+          "ast": "BUILD",
+          "data": "Ws",
+          "type": "CALL"
+        },
+        {
+          "ast": "SKIP",
+          "data": [
+            {
+              "ast": "BUILD",
+              "data": "Value",
+              "type": "CALL"
+            },
+            {
+              "ast": "SKIP",
+              "data": [
+                {
+                  "ast": "BUILD",
+                  "data": "Com",
+                  "type": "CALL"
+                },
+                {
+                  "ast": "BUILD",
+                  "data": "Value",
+                  "type": "CALL"
+                }
+              ],
+              "max": 9223372036854775807,
+              "min": 0,
+              "type": "SEQUENCE"
+            }
+          ],
+          "max": 1,
+          "min": 0,
+          "type": "SEQUENCE"
+        },
+        {
+          "ast": "VOID",
+          "data": "]",
+          "type": "STRING"
+        }
+      ],
+      "type": "SEQUENCE"
+    },
+    "type": "RULE"
+  },
+  "Col": {
+    "ast": "VOID",
+    "data": {
+      "ast": "SKIP",
+      "data": [
+        {
+          "ast": "VOID",
+          "data": ":",
+          "type": "STRING"
+        },
+        {
+          "ast": "BUILD",
+          "data": "Ws",
+          "type": "CALL"
+        }
+      ],
+      "type": "SEQUENCE"
+    },
+    "type": "RULE"
+  },
+  "Com": {
+    "ast": "VOID",
+    "data": {
+      "ast": "SKIP",
+      "data": [
+        {
+          "ast": "VOID",
+          "data": ",",
+          "type": "STRING"
+        },
+        {
+          "ast": "BUILD",
+          "data": "Ws",
+          "type": "CALL"
+        }
+      ],
+      "type": "SEQUENCE"
+    },
+    "type": "RULE"
+  },
+  "Escaped": {
+    "ast": "BUILD",
+    "data": {
+      "ast": "SKIP",
+      "data": [
+        {
+          "ast": "SKIP",
+          "data": [
+            {
+              "ast": "VOID",
+              "data": "u",
+              "type": "STRING"
+            },
+            {
+              "ast": "VOID",
+              "data": "0123456789abcdefABCDEF",
+              "type": "RANGE"
+            },
+            {
+              "ast": "VOID",
+              "data": "0123456789abcdefABCDEF",
+              "type": "RANGE"
+            },
+            {
+              "ast": "VOID",
+              "data": "0123456789abcdefABCDEF",
+              "type": "RANGE"
+            },
+            {
+              "ast": "VOID",
+              "data": "0123456789abcdefABCDEF",
+              "type": "RANGE"
+            }
+          ],
+          "type": "SEQUENCE"
+        },
+        {
+          "ast": "VOID",
+          "data": "\"/\\bfnrt",
+          "type": "RANGE"
+        }
+      ],
+      "type": "CHOICE"
+    },
+    "type": "RULE"
+  },
+  "Json": {
+    "ast": "BUILD",
+    "data": {
+      "ast": "SKIP",
+      "data": [
+        {
+          "ast": "BUILD",
+          "data": "Ws",
+          "type": "CALL"
+        },
+        {
+          "ast": "BUILD",
+          "data": "Value",
+          "type": "CALL"
+        }
+      ],
+      "type": "SEQUENCE"
+    },
+    "type": "RULE"
+  },
+  "Literal": {
+    "ast": "BUILD",
+    "data": {
+      "ast": "SKIP",
+      "data": [
+        {
+          "ast": "VOID",
+          "data": "true",
+          "type": "STRING"
+        },
+        {
+          "ast": "VOID",
+          "data": "false",
+          "type": "STRING"
+        },
+        {
+          "ast": "VOID",
+          "data": "null",
+          "type": "STRING"
+        }
+      ],
+      "type": "CHOICE"
+    },
+    "type": "RULE"
+  },
+  "Member": {
+    "ast": "BUILD",
+    "data": {
+      "ast": "SKIP",
+      "data": [
+        {
+          "ast": "BUILD",
+          "data": "String",
+          "type": "CALL"
+        },
+        {
+          "ast": "BUILD",
+          "data": "Ws",
+          "type": "CALL"
+        },
+        {
+          "ast": "BUILD",
+          "data": "Col",
+          "type": "CALL"
+        },
+        {
+          "ast": "BUILD",
+          "data": "Value",
+          "type": "CALL"
+        }
+      ],
+      "type": "SEQUENCE"
+    },
+    "type": "RULE"
+  },
+  "Number": {
+    "ast": "BUILD",
+    "data": {
+      "ast": "SKIP",
+      "data": [
+        {
+          "ast": "VOID",
+          "data": "-",
+          "max": 1,
+          "min": 0,
+          "type": "STRING"
+        },
+        {
+          "ast": "SKIP",
+          "data": [
+            {
+              "ast": "VOID",
+              "data": "0",
+              "type": "STRING"
+            },
+            {
+              "ast": "SKIP",
+              "data": [
+                {
+                  "ast": "VOID",
+                  "data": "123456789",
+                  "type": "RANGE"
+                },
+                {
+                  "ast": "VOID",
+                  "data": "0123456789",
+                  "max": 9223372036854775807,
+                  "min": 0,
+                  "type": "RANGE"
+                }
+              ],
+              "type": "SEQUENCE"
+            }
+          ],
+          "type": "CHOICE"
+        },
+        {
+          "ast": "SKIP",
+          "data": [
+            {
+              "ast": "VOID",
+              "data": ".",
+              "type": "STRING"
+            },
+            {
+              "ast": "VOID",
+              "data": "0123456789",
+              "max": 9223372036854775807,
+              "min": 1,
+              "type": "RANGE"
+            }
+          ],
+          "max": 1,
+          "min": 0,
+          "type": "SEQUENCE"
+        },
+        {
+          "ast": "SKIP",
+          "data": [
+            {
+              "ast": "VOID",
+              "data": "eE",
+              "type": "RANGE"
+            },
+            {
+              "ast": "VOID",
+              "data": "+-",
+              "max": 1,
+              "min": 0,
+              "type": "RANGE"
+            },
+            {
+              "ast": "VOID",
+              "data": "0123456789",
+              "max": 9223372036854775807,
+              "min": 1,
+              "type": "RANGE"
+            }
+          ],
+          "max": 1,
+          "min": 0,
+          "type": "SEQUENCE"
+        }
+      ],
+      "type": "SEQUENCE"
+    },
+    "type": "RULE"
+  },
+  "Object": {
+    "ast": "BUILD",
+    "data": {
+      "ast": "SKIP",
+      "data": [
+        {
+          "ast": "VOID",
+          "data": "{",
+          "type": "STRING"
+        },
+        {
+          "ast": "BUILD",
+          "data": "Ws",
+          "type": "CALL"
+        },
+        {
+          "ast": "SKIP",
+          "data": [
+            {
+              "ast": "BUILD",
+              "data": "Member",
+              "type": "CALL"
+            },
+            {
+              "ast": "SKIP",
+              "data": [
+                {
+                  "ast": "BUILD",
+                  "data": "Com",
+                  "type": "CALL"
+                },
+                {
+                  "ast": "BUILD",
+                  "data": "Member",
+                  "type": "CALL"
+                }
+              ],
+              "max": 9223372036854775807,
+              "min": 0,
+              "type": "SEQUENCE"
+            }
+          ],
+          "max": 1,
+          "min": 0,
+          "type": "SEQUENCE"
+        },
+        {
+          "ast": "VOID",
+          "data": "}",
+          "type": "STRING"
+        }
+      ],
+      "type": "SEQUENCE"
+    },
+    "type": "RULE"
+  },
+  "String": {
+    "ast": "BUILD",
+    "data": {
+      "ast": "SKIP",
+      "data": [
+        {
+          "ast": "VOID",
+          "data": "\"",
+          "type": "STRING"
+        },
+        {
+          "ast": "SKIP",
+          "data": [
+            {
+              "ast": "SKIP",
+              "data": [
+                {
+                  "ast": "VOID",
+                  "data": "\\",
+                  "type": "STRING"
+                },
+                {
+                  "ast": "BUILD",
+                  "data": "Escaped",
+                  "type": "CALL"
+                }
+              ],
+              "type": "SEQUENCE"
+            },
+            {
+              "ast": "SKIP",
+              "data": [
+                {
+                  "ast": "VOID",
+                  "data": "\\",
+                  "predicate": false,
+                  "type": "STRING"
+                },
+                {
+                  "ast": "VOID",
+                  "data": "\"",
+                  "predicate": false,
+                  "type": "STRING"
+                },
+                {
+                  "ast": "VOID",
+                  "type": "WILDCARD"
+                }
+              ],
+              "type": "SEQUENCE"
+            }
+          ],
+          "max": 9223372036854775807,
+          "min": 0,
+          "type": "CHOICE"
+        },
+        {
+          "ast": "VOID",
+          "data": "\"",
+          "type": "STRING"
+        }
+      ],
+      "type": "SEQUENCE"
+    },
+    "type": "RULE"
+  },
+  "Value": {
+    "ast": "SKIP",
+    "data": {
+      "ast": "SKIP",
+      "data": [
+        {
+          "ast": "SKIP",
+          "data": [
+            {
+              "ast": "BUILD",
+              "data": "Object",
+              "type": "CALL"
+            },
+            {
+              "ast": "BUILD",
+              "data": "Array",
+              "type": "CALL"
+            },
+            {
+              "ast": "BUILD",
+              "data": "Number",
+              "type": "CALL"
+            },
+            {
+              "ast": "BUILD",
+              "data": "String",
+              "type": "CALL"
+            },
+            {
+              "ast": "BUILD",
+              "data": "Literal",
+              "type": "CALL"
+            }
+          ],
+          "type": "CHOICE"
+        },
+        {
+          "ast": "BUILD",
+          "data": "Ws",
+          "type": "CALL"
+        }
+      ],
+      "type": "SEQUENCE"
+    },
+    "type": "RULE"
+  },
+  "Ws": {
+    "ast": "VOID",
+    "data": {
+      "ast": "VOID",
+      "data": " \t\n\r",
+      "max": 9223372036854775807,
+      "min": 0,
+      "type": "RANGE"
+    },
+    "type": "RULE"
+  }
+}
