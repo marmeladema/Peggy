@@ -149,6 +149,7 @@ class Peggy:
 		self._last_state = self.state_init({'ast': 'VOID', 'type': 'CALL'}, 0)
 		n = 0
 		while len(self._stack) > 0:
+			position = self.position()
 			head = self._stack[-1]
 			if self._last_state['error'] is False and self._last_state['length'
 			                                                           ] > 0:
@@ -175,6 +176,11 @@ class Peggy:
 
 			if debug:
 				print('########################')
+				print('position:', position)
+				if position < len(input):
+					print('lookahead:', repr(input[position]))
+				else:
+					print('lookahead: EOF')
 				print('stack length:', len(self._stack))
 				pprint.pprint({'stack': self._stack})
 				print('recstack length:', len(self._recstack))
@@ -213,10 +219,9 @@ class Peggy:
 							head['index'] = sys.maxsize
 				elif head['step']['type'] == 'STRING':
 					assert (head['index'] == 0)
-					start = head['position'] + head['length']
 					data_len = len(head['step']['data'])
-					if start + data_len <= len(input) and input[
-					    start:start + data_len] == head['step']['data']:
+					if position + data_len <= len(input) and input[
+					    position:position + data_len] == head['step']['data']:
 						if debug:
 							print('string', head['step']['data'], 'matched')
 						head['length'] += data_len
@@ -225,9 +230,8 @@ class Peggy:
 						head['index'] = sys.maxsize
 				elif head['step']['type'] == 'WILDCARD':
 					assert (head['index'] == 0)
-					start = head['position'] + head['length']
 					data_len = 1
-					if start + data_len <= len(input):
+					if position + data_len <= len(input):
 						head['length'] += data_len
 						head['index'] = 0
 					else:
@@ -254,11 +258,10 @@ class Peggy:
 						head['index'] += 1
 				elif head['step']['type'] == 'RANGE':
 					assert (head['index'] == 0)
-					start = head['position'] + head['length']
 					data_len = 1
 					head['ast'] = 'VOID'
-					if start + data_len <= len(input) and input[start] in head[
-					    'step']['data']:
+					if position + data_len <= len(input) and input[
+					    position] in head['step']['data']:
 						head['length'] += data_len
 						head['index'] = 0
 					else:
