@@ -59,7 +59,7 @@ def unit2json(ast, data):
 		unit['ast'] = 'VOID'
 	elif ast['children'][0]['step']['type'] == 'CALL' and ast['children'][0][
 	    'step']['data'] == 'CaseLiteral':
-		unit['type'] = 'STRING'
+		unit['type'] = 'STRINGI'
 		unit['data'] = peggy.astdata(
 		    ast['children'][0], data
 		).strip()[1:-1].encode('utf-8').decode('unicode_escape')

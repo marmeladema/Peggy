@@ -45,6 +45,8 @@ class Peggy:
 			pass
 		elif node['type'] == 'STRING':
 			pass
+		elif node['type'] == 'STRINGI':
+			pass
 		elif node['type'] == 'CALL':
 			pass
 		else:
@@ -226,6 +228,15 @@ class Peggy:
 					data_len = len(head['step']['data'])
 					if position + data_len <= len(input) and input[
 					    position:position + data_len] == head['step']['data']:
+						head['length'] += data_len
+						head['index'] = 0
+					else:
+						head['index'] = sys.maxsize
+				elif head['step']['type'] == 'STRINGI':
+					assert (head['index'] == 0)
+					data_len = len(head['step']['data'])
+					if position + data_len <= len(input) and input[
+					    position:position + data_len].lower() == head['step']['data'].lower():
 						head['length'] += data_len
 						head['index'] = 0
 					else:

@@ -13,7 +13,7 @@
 				},
 				"type": {
 					"type": "string",
-					"enum": ["RULE", "CALL", "SEQUENCE", "CHOICE", "RANGE", "WILDCARD", "STRING"]
+					"enum": ["RULE", "CALL", "SEQUENCE", "CHOICE", "RANGE", "WILDCARD", "STRING", "STRINGI"]
 				},
 				"min": {
 					"type": "integer"
@@ -38,7 +38,7 @@
 					"properties": {
 						"type": {
 							"type": "string",
-							"enum": ["CALL", "STRING", "RANGE"]
+							"enum": ["CALL", "STRING", "STRINGI", "RANGE"]
 						},
 						"data": {
 							"type": "string",
