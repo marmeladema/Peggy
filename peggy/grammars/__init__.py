@@ -3,30 +3,29 @@ import os
 
 import peggy
 from .json import grammar2json as json_grammar2json
+from .pegjs import grammar2json as pegjs_grammar2json
 from .waxeye import grammar2json as waxeye_grammar2json
+
+cfd = os.path.dirname(__file__)
 
 all = {
     'json': {
-        'source':
-        open(os.path.join(os.path.dirname(__file__), 'json.json')).read(),
-        'tree':
-        json_load(open(os.path.join(os.path.dirname(__file__), 'json.json'))),
-        'rule':
-        'Json',
-        'convert':
-        json_grammar2json,
+        'source': open(os.path.join(cfd, 'json.json')).read(),
+        'tree': json_load(open(os.path.join(cfd, 'json.json'))),
+        'rule': 'Json',
+        'convert': json_grammar2json,
+    },
+    'pegjs': {
+        'source': open(os.path.join(cfd, 'pegjs.pegjs')).read(),
+        'tree': json_load(open(os.path.join(cfd, 'pegjs.json'))),
+        'rule': 'Grammar',
+        'convert': pegjs_grammar2json,
     },
     'waxeye': {
-        'source':
-        open(os.path.join(os.path.dirname(__file__), 'waxeye.peg')).read(),
-        'tree':
-        json_load(
-            open(os.path.join(os.path.dirname(__file__), 'waxeye.json'))
-        ),
-        'rule':
-        'Grammar',
-        'convert':
-        waxeye_grammar2json,
+        'source': open(os.path.join(cfd, 'waxeye.peg')).read(),
+        'tree': json_load(open(os.path.join(cfd, 'waxeye.json'))),
+        'rule': 'Grammar',
+        'convert': waxeye_grammar2json,
     },
 }
 
