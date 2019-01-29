@@ -10,12 +10,13 @@ import peggy.grammars
 class PeggyTestCase(unittest.TestCase):
 	def assertUnifiedDiff(self, fromfile, tofile):
 		with open(fromfile, 'rt') as a_fd, open(tofile, 'rt') as b_fd:
+			a_lines = a_fd.readlines()
+			b_lines = b_fd.readlines()
+			self.assertGreater(len(a_lines), 0)
+			self.assertGreater(len(b_lines), 0)
 			diff = ''.join(
 			    difflib.unified_diff(
-			        a_fd.readlines(),
-			        b_fd.readlines(),
-			        fromfile = fromfile,
-			        tofile = tofile
+			        a_lines, b_lines, fromfile = fromfile, tofile = tofile
 			    )
 			)
 			if diff:
@@ -42,7 +43,9 @@ class PeggyTestCase(unittest.TestCase):
 			src_fd.write(
 			    json.dumps(ref, sort_keys = True, indent = 2).encode('utf-8')
 			)
+			src_fd.flush()
 			dst_fd.write(
 			    parser.json(sort_keys = True, indent = 2).encode('utf-8')
 			)
+			dst_fd.flush()
 			self.assertUnifiedDiff(src_fd.name, dst_fd.name)

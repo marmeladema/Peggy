@@ -5,7 +5,7 @@
       "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": "a",
           "type": "STRING"
         },
@@ -17,7 +17,7 @@
           "type": "CALL"
         },
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": "b",
           "type": "STRING"
         }
@@ -32,7 +32,7 @@
       "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": "b",
           "type": "STRING"
         },
@@ -44,7 +44,7 @@
           "type": "CALL"
         },
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": "c",
           "type": "STRING"
         }
@@ -67,7 +67,7 @@
               "type": "CALL"
             },
             {
-              "ast": "BUILD",
+              "ast": "VOID",
               "data": "c",
               "type": "STRING"
             }
@@ -76,7 +76,7 @@
           "type": "SEQUENCE"
         },
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": "a",
           "max": 9223372036854775807,
           "min": 1,

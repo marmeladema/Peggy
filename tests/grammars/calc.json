@@ -25,12 +25,12 @@
               "ast": "SKIP",
               "data": [
                 {
-                  "ast": "BUILD",
+                  "ast": "VOID",
                   "data": "*",
                   "type": "STRING"
                 },
                 {
-                  "ast": "BUILD",
+                  "ast": "VOID",
                   "data": "/",
                   "type": "STRING"
                 }
@@ -69,12 +69,12 @@
               "ast": "SKIP",
               "data": [
                 {
-                  "ast": "BUILD",
+                  "ast": "VOID",
                   "data": "+",
                   "type": "STRING"
                 },
                 {
-                  "ast": "BUILD",
+                  "ast": "VOID",
                   "data": "-",
                   "type": "STRING"
                 }
@@ -102,7 +102,7 @@
       "ast": "SKIP",
       "data": [
         {
-          "ast": "BUILD",
+          "ast": "VOID",
           "data": "0123456789",
           "max": 9223372036854775807,
           "min": 1,
@@ -112,7 +112,7 @@
           "ast": "SKIP",
           "data": [
             {
-              "ast": "BUILD",
+              "ast": "VOID",
               "data": "(",
               "type": "STRING"
             },
@@ -122,7 +122,7 @@
               "type": "CALL"
             },
             {
-              "ast": "BUILD",
+              "ast": "VOID",
               "data": ")",
               "type": "STRING"
             }
