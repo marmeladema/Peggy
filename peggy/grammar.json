@@ -9,7 +9,7 @@
 			"properties": {
 				"ast": {
 					"type": "string",
-					"enum": ["BUILD", "SKIP", "VOID"]
+					"enum": ["BUILD", "SKIP", "VOID", "PRUNE"]
 				},
 				"type": {
 					"type": "string",

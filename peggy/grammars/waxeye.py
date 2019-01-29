@@ -177,7 +177,7 @@ def grammar2json(ast, data):
 		    'ast': {
 		        'LeftArrow': 'BUILD',
 		        'VoidArrow': 'VOID',
-		        'PruneArrow': 'SKIP',
+		        'PruneArrow': 'PRUNE',
 		    }[arrow['step']['data']],
 		    'data': node2json(definition['children'][2], data),
 		}

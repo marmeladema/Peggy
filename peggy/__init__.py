@@ -160,7 +160,13 @@ class Peggy:
 			if self._last_state['error'] is False and self._last_state['length'
 			                                                           ] > 0:
 				head['length'] += self._last_state['length']
-				if self._last_state['ast'] in ['BUILD']:
+				if self._last_state['ast'] == 'PRUNE':
+					for node in self._last_state['nodes']:
+						if len(node['children']) == 1:
+							head['children'].append(node['children'][0])
+						else:
+							head['children'].append(node)
+				elif self._last_state['ast'] == 'BUILD':
 					head['children'].extend(self._last_state['nodes'])
 				elif self._last_state['ast'] == 'SKIP':
 					head['children'].extend(self._last_state['children'])
