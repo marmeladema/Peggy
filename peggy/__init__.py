@@ -43,12 +43,36 @@ class Range(list):
 		assert (len(self) % 2 == 0)
 		if isinstance(r, Range):
 			assert (len(r) % 2 == 0)
-			for j in range(0, len(r), 2):
-				for c in range(r[j], r[j + 1] + 1):
-					self.append(c)
+			for i in range(0, len(r), 2):
+				self.add(r[i], r[i+1])
 		else:
 			for c in r:
 				self.append(c)
+
+	def add(self, a, b):
+		assert (len(self) % 2 == 0)
+		assert(a <= b)
+		for i in range(0, len(self), 2):
+			if a <= self[i+1]+1 and b >= self[i]-1:
+				a = self[i] = min(a, self[i])
+				b = self[i+1] = max(b, self[i+1])
+				i += 2
+				while i < len(self) and a <= self[i+1]+1 and b >= self[i]-1:
+					a = self[i-2] = min(a, self.pop(i))
+					b = self[i-1] = max(b, self.pop(i))
+				return
+			elif b < self[i]:
+				super().insert(i, b)
+				super().insert(i, a)
+				return
+		super().extend([a, b])
+
+	def __contains__(self, c):
+		assert (len(self) % 2 == 0)
+		for i in range(0, len(self), 2):
+			if c >= self[i] and c <= self[i + 1]:
+				return True
+		return False
 
 
 class Peggy:
@@ -314,17 +338,10 @@ class Peggy:
 					assert (head['index'] == 0)
 					assert (len(head['step']['data']) % 2 == 0)
 					head['ast'] = 'VOID'
-					found = False
-					if position < len(input):
-						c = ord(input[position])
-						for i in range(0, len(head['step']['data']), 2):
-							if c >= head['step']['data'][i] and c <= head[
-							    'step']['data'][i + 1]:
-								head['length'] += 1
-								head['index'] = 0
-								found = True
-								break
-					if not found:
+					if position < len(input) and ord(input[position]) in Range(head['step']['data']):
+						head['length'] += 1
+						head['index'] = 0
+					else:
 						head['index'] = sys.maxsize
 				else:
 					raise NotImplementedError(head['step'])
