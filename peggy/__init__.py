@@ -16,6 +16,41 @@ ast_priority = {
 }
 
 
+class Range(list):
+	def append(self, c):
+		assert (len(self) % 2 == 0)
+		for i in range(0, len(self), 2):
+			if c < self[i] - 1:
+				self.insert(i, c)
+				self.insert(i, c)
+				return
+			elif self[i] - 1 == c:
+				self[i] -= 1
+				return
+			if self[i] <= c and c <= self[i + 1]:
+				return
+			elif self[i + 1] + 1 == c:
+				if i + 2 < len(self) and c == self[i + 2] - 1:
+					self.pop(i + 1)
+					self.pop(i + 1)
+				else:
+					self[i + 1] += 1
+				return
+		super().append(c)
+		super().append(c)
+
+	def extend(self, r):
+		assert (len(self) % 2 == 0)
+		if isinstance(r, Range):
+			assert (len(r) % 2 == 0)
+			for j in range(0, len(r), 2):
+				for c in range(r[j], r[j + 1] + 1):
+					self.append(c)
+		else:
+			for c in r:
+				self.append(c)
+
+
 class Peggy:
 	def __init__(self, grammar, debug = False):
 
@@ -277,13 +312,19 @@ class Peggy:
 						head['index'] += 1
 				elif head['step']['type'] == 'RANGE':
 					assert (head['index'] == 0)
-					data_len = 1
+					assert (len(head['step']['data']) % 2 == 0)
 					head['ast'] = 'VOID'
-					if position + data_len <= len(input) and input[
-					    position] in head['step']['data']:
-						head['length'] += data_len
-						head['index'] = 0
-					else:
+					found = False
+					if position < len(input):
+						c = ord(input[position])
+						for i in range(0, len(head['step']['data']), 2):
+							if c >= head['step']['data'][i] and c <= head[
+							    'step']['data'][i + 1]:
+								head['length'] += 1
+								head['index'] = 0
+								found = True
+								break
+					if not found:
 						head['index'] = sys.maxsize
 				else:
 					raise NotImplementedError(head['step'])

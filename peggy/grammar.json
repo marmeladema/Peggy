@@ -38,11 +38,25 @@
 					"properties": {
 						"type": {
 							"type": "string",
-							"enum": ["CALL", "STRING", "STRINGI", "RANGE"]
+							"enum": ["CALL", "STRING", "STRINGI"]
 						},
 						"data": {
 							"type": "string",
 							"minLength": 1
+						}
+					}
+				},
+				{
+					"properties": {
+						"type": {
+							"type": "string",
+							"enum": ["RANGE"]
+						},
+						"data": {
+							"type": "array",
+							"items": {
+								"type": "integer"
+							}
 						}
 					}
 				},

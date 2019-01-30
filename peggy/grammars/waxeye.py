@@ -12,34 +12,38 @@ EscapeChar = {
     '\\': '\\',
     '"': '"',
     '\'': '\'',
-    '-': '-'
+    '-': '-',
+    ']': ']',
 }
 
 
-def parse_range(s):
-	r = ''
-	l = len(s)
-	i = 0
-	while i < l:
-		if s[i] == '\\':
-			if i < l - 1 and s[i + 1] in EscapeChar:
-				r += EscapeChar[s[i + 1]]
-				i += 1
-			elif i < l - 1 and s[i + 1] == ']':
-				r += ']'
-				i += 1
-			else:
-				return None
-		elif s[i] == '-' and i > 0 and i < l - 1:
-			r += ''.join(
-			    [chr(o) for o in range(ord(s[i - 1]) + 1,
-			                           ord(s[i + 1]) + 1)]
-			)
-			i += 1
-		else:
-			r += s[i]
-		i += 1
-	return r
+def item2json(ast, data):
+	s = peggy.astdata(ast, data)
+	assert (s)
+	assert (ast['step']['type'] == 'CALL')
+	if ast['step']['data'] == 'Char':
+		if s[0] == '\\':
+			return ord(EscapeChar[s[1:]])
+		return ord(s)
+	elif ast['step']['data'] == 'Hex':
+		assert (s[0] == '\\' and s[1] == '<' and s[-1] == '>')
+		return ord(bytes.fromhex(s[2:-1]).decode('utf-8'))
+	else:
+		raise RuntimeError('Invalid range item {}'.format(s))
+
+
+def range2json(ast, data, unit):
+	assert (ast['step']['type'] == 'CALL')
+	assert (ast['step']['data'] == 'Range')
+	if len(ast['children']) == 1:
+		unit['data'].append(item2json(ast['children'][0], data))
+	elif len(ast['children']) == 2:
+		a = item2json(ast['children'][0], data)
+		b = item2json(ast['children'][1], data)
+		for c in range(a, b + 1):
+			unit['data'].append(c)
+	else:
+		raise RuntimeError()
 
 
 def unit2json(ast, data):
@@ -72,10 +76,10 @@ def unit2json(ast, data):
 	elif ast['children'][0]['step']['type'] == 'CALL' and ast['children'][0][
 	    'step']['data'] == 'CharClass':
 		unit['type'] = 'RANGE'
-		unit['data'] = parse_range(
-		    peggy.astdata(ast['children'][0], data).strip()[1:-1]
-		)
+		unit['data'] = peggy.Range()
 		unit['ast'] = 'VOID'
+		for child in ast['children'][0]['children']:
+			range2json(child, data, unit)
 	elif ast['children'][0]['step']['type'] == 'CALL' and ast['children'][0][
 	    'step']['data'] == 'WildCard':
 		unit['type'] = 'WILDCARD'

@@ -130,7 +130,10 @@
       "data": [
         {
           "ast": "VOID",
-          "data": "\"",
+          "data": [
+            34,
+            34
+          ],
           "type": "RANGE"
         },
         {
@@ -138,7 +141,10 @@
           "data": [
             {
               "ast": "VOID",
-              "data": "\"",
+              "data": [
+                34,
+                34
+              ],
               "predicate": false,
               "type": "RANGE"
             },
@@ -165,7 +171,10 @@
         },
         {
           "ast": "VOID",
-          "data": "\"",
+          "data": [
+            34,
+            34
+          ],
           "type": "RANGE"
         },
         {
@@ -193,7 +202,18 @@
             },
             {
               "ast": "VOID",
-              "data": "nrt-]\\",
+              "data": [
+                45,
+                45,
+                92,
+                93,
+                110,
+                110,
+                114,
+                114,
+                116,
+                116
+              ],
               "type": "RANGE"
             }
           ],
@@ -426,12 +446,26 @@
         },
         {
           "ast": "VOID",
-          "data": "0123456789ABCDEFabcdef",
+          "data": [
+            48,
+            57,
+            65,
+            70,
+            97,
+            102
+          ],
           "type": "RANGE"
         },
         {
           "ast": "VOID",
-          "data": "0123456789ABCDEFabcdef",
+          "data": [
+            48,
+            57,
+            65,
+            70,
+            97,
+            102
+          ],
           "type": "RANGE"
         },
         {
@@ -451,12 +485,30 @@
       "data": [
         {
           "ast": "VOID",
-          "data": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_",
+          "data": [
+            65,
+            90,
+            95,
+            95,
+            97,
+            122
+          ],
           "type": "RANGE"
         },
         {
           "ast": "VOID",
-          "data": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-",
+          "data": [
+            45,
+            45,
+            48,
+            57,
+            65,
+            90,
+            95,
+            95,
+            97,
+            122
+          ],
           "max": 9223372036854775807,
           "min": 0,
           "type": "RANGE"
@@ -486,7 +538,20 @@
             },
             {
               "ast": "VOID",
-              "data": "nrt'\"\\",
+              "data": [
+                34,
+                34,
+                39,
+                39,
+                92,
+                92,
+                110,
+                110,
+                114,
+                114,
+                116,
+                116
+              ],
               "type": "RANGE"
             }
           ],
@@ -576,7 +641,10 @@
       "data": [
         {
           "ast": "VOID",
-          "data": "'",
+          "data": [
+            39,
+            39
+          ],
           "type": "RANGE"
         },
         {
@@ -584,7 +652,10 @@
           "data": [
             {
               "ast": "VOID",
-              "data": "'",
+              "data": [
+                39,
+                39
+              ],
               "predicate": false,
               "type": "RANGE"
             },
@@ -611,7 +682,10 @@
         },
         {
           "ast": "VOID",
-          "data": "'",
+          "data": [
+            39,
+            39
+          ],
           "type": "RANGE"
         },
         {
@@ -700,7 +774,18 @@
       "data": [
         {
           "ast": "VOID",
-          "data": "?*+:&!",
+          "data": [
+            33,
+            33,
+            38,
+            38,
+            42,
+            43,
+            58,
+            58,
+            63,
+            63
+          ],
           "type": "RANGE"
         },
         {
@@ -1008,7 +1093,12 @@
       "data": [
         {
           "ast": "VOID",
-          "data": " \t",
+          "data": [
+            9,
+            9,
+            32,
+            32
+          ],
           "type": "RANGE"
         },
         {

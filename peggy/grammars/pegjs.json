@@ -59,7 +59,10 @@
       "data": [
         {
           "ast": "VOID",
-          "data": "\"",
+          "data": [
+            34,
+            34
+          ],
           "type": "RANGE"
         },
         {
@@ -67,7 +70,10 @@
           "data": [
             {
               "ast": "VOID",
-              "data": "\"",
+              "data": [
+                34,
+                34
+              ],
               "predicate": false,
               "type": "RANGE"
             },
@@ -99,7 +105,10 @@
         },
         {
           "ast": "VOID",
-          "data": "\"",
+          "data": [
+            34,
+            34
+          ],
           "type": "RANGE"
         },
         {
@@ -127,7 +136,22 @@
             },
             {
               "ast": "VOID",
-              "data": "nrtvf-]\\",
+              "data": [
+                45,
+                45,
+                92,
+                93,
+                102,
+                102,
+                110,
+                110,
+                114,
+                114,
+                116,
+                116,
+                118,
+                118
+              ],
               "type": "RANGE"
             }
           ],
@@ -414,12 +438,26 @@
         },
         {
           "ast": "VOID",
-          "data": "0123456789ABCDEFabcdef",
+          "data": [
+            48,
+            57,
+            65,
+            70,
+            97,
+            102
+          ],
           "type": "RANGE"
         },
         {
           "ast": "VOID",
-          "data": "0123456789ABCDEFabcdef",
+          "data": [
+            48,
+            57,
+            65,
+            70,
+            97,
+            102
+          ],
           "type": "RANGE"
         },
         {
@@ -439,12 +477,30 @@
       "data": [
         {
           "ast": "VOID",
-          "data": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_",
+          "data": [
+            65,
+            90,
+            95,
+            95,
+            97,
+            122
+          ],
           "type": "RANGE"
         },
         {
           "ast": "VOID",
-          "data": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-",
+          "data": [
+            45,
+            45,
+            48,
+            57,
+            65,
+            90,
+            95,
+            95,
+            97,
+            122
+          ],
           "max": 9223372036854775807,
           "min": 0,
           "type": "RANGE"
@@ -469,7 +525,24 @@
             },
             {
               "ast": "VOID",
-              "data": "nrtvf'\"\\",
+              "data": [
+                34,
+                34,
+                39,
+                39,
+                92,
+                92,
+                102,
+                102,
+                110,
+                110,
+                114,
+                114,
+                116,
+                116,
+                118,
+                118
+              ],
               "type": "RANGE"
             }
           ],
@@ -509,7 +582,10 @@
       "data": [
         {
           "ast": "VOID",
-          "data": "'",
+          "data": [
+            39,
+            39
+          ],
           "type": "RANGE"
         },
         {
@@ -517,7 +593,10 @@
           "data": [
             {
               "ast": "VOID",
-              "data": "'",
+              "data": [
+                39,
+                39
+              ],
               "predicate": false,
               "type": "RANGE"
             },
@@ -549,7 +628,10 @@
         },
         {
           "ast": "VOID",
-          "data": "'",
+          "data": [
+            39,
+            39
+          ],
           "type": "RANGE"
         },
         {
@@ -635,7 +717,14 @@
     "ast": "BUILD",
     "data": {
       "ast": "VOID",
-      "data": "$&!",
+      "data": [
+        33,
+        33,
+        36,
+        36,
+        38,
+        38
+      ],
       "type": "RANGE"
     },
     "type": "RULE"
@@ -769,7 +858,14 @@
     "ast": "BUILD",
     "data": {
       "ast": "VOID",
-      "data": "?*+i",
+      "data": [
+        42,
+        43,
+        63,
+        63,
+        105,
+        105
+      ],
       "type": "RANGE"
     },
     "type": "RULE"
@@ -786,22 +882,50 @@
         },
         {
           "ast": "VOID",
-          "data": "0123456789ABCDEFabcdef",
+          "data": [
+            48,
+            57,
+            65,
+            70,
+            97,
+            102
+          ],
           "type": "RANGE"
         },
         {
           "ast": "VOID",
-          "data": "0123456789ABCDEFabcdef",
+          "data": [
+            48,
+            57,
+            65,
+            70,
+            97,
+            102
+          ],
           "type": "RANGE"
         },
         {
           "ast": "VOID",
-          "data": "0123456789ABCDEFabcdef",
+          "data": [
+            48,
+            57,
+            65,
+            70,
+            97,
+            102
+          ],
           "type": "RANGE"
         },
         {
           "ast": "VOID",
-          "data": "0123456789ABCDEFabcdef",
+          "data": [
+            48,
+            57,
+            65,
+            70,
+            97,
+            102
+          ],
           "type": "RANGE"
         }
       ],
@@ -819,12 +943,30 @@
           "data": [
             {
               "ast": "VOID",
-              "data": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_",
+              "data": [
+                65,
+                90,
+                95,
+                95,
+                97,
+                122
+              ],
               "type": "RANGE"
             },
             {
               "ast": "VOID",
-              "data": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-",
+              "data": [
+                45,
+                45,
+                48,
+                57,
+                65,
+                90,
+                95,
+                95,
+                97,
+                122
+              ],
               "max": 9223372036854775807,
               "min": 0,
               "type": "RANGE"
@@ -1004,7 +1146,12 @@
       "data": [
         {
           "ast": "VOID",
-          "data": " \t",
+          "data": [
+            9,
+            9,
+            32,
+            32
+          ],
           "type": "RANGE"
         },
         {
