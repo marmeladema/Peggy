@@ -11,10 +11,12 @@ setup(
     url = 'https://github.com/marmeladema/Peggy/',
     packages = ['peggy', 'peggy.grammars'],
     package_data = {'peggy': ['grammar.json', 'grammars/waxeye.json']},
-    scripts = ['peggyparse'],
     python_requires = '>=3',
     test_suite = 'tests',
     entry_points = {
-        'console_scripts': ['peggyconv=peggy.convert:main'],
+        'console_scripts': [
+            'peggyparse=peggy.__main__:main',
+            'peggyconv=peggy.convert:main'
+        ],
     }
 )
